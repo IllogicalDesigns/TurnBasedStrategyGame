@@ -9,19 +9,19 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1607260147785586}
+  m_RootGameObject: {fileID: 1803889417325230}
   m_IsPrefabParent: 1
---- !u!1 &1607260147785586
+--- !u!1 &1803889417325230
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4980696633752958}
-  - component: {fileID: 114629214913252168}
-  - component: {fileID: 114835256681043020}
-  - component: {fileID: 114777189169639150}
+  - component: {fileID: 4682692426861160}
+  - component: {fileID: 114516293464888928}
+  - component: {fileID: 114834682585585798}
+  - component: {fileID: 114669007921235932}
   m_Layer: 0
   m_Name: A_
   m_TagString: Untagged
@@ -29,25 +29,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4980696633752958
+--- !u!4 &4682692426861160
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1607260147785586}
+  m_GameObject: {fileID: 1803889417325230}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.05, y: 0, z: -0.06}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114629214913252168
+--- !u!114 &114516293464888928
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1607260147785586}
+  m_GameObject: {fileID: 1803889417325230}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9c3437e40fca52499c682fdd3780cb1, type: 3}
@@ -60,25 +60,25 @@ MonoBehaviour:
   walkableMask:
     serializedVersion: 2
     m_Bits: 1024
-  gridWorldSize: {x: 11, y: 11}
-  nodeRadius: 0.5
---- !u!114 &114777189169639150
+  gridWorldSize: {x: 20, y: 20}
+  nodeRadius: 1
+--- !u!114 &114669007921235932
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1607260147785586}
+  m_GameObject: {fileID: 1803889417325230}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9919a39dfccdb7b4aa9e073ce5fcefee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114835256681043020
+--- !u!114 &114834682585585798
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1607260147785586}
+  m_GameObject: {fileID: 1803889417325230}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b2fd1f3c697367f42b66496ac82df097, type: 3}
