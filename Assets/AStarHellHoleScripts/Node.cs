@@ -4,6 +4,7 @@ using System.Collections;
 public class Node : IHeapItem<Node> {
 	
 	public bool walkable;
+	public bool tmpUnWalkable; //possible flag to prevent units from moving through other units
 	public Vector3 worldPosition;
 	public int gridX;
 	public int gridY;
@@ -15,6 +16,7 @@ public class Node : IHeapItem<Node> {
 	
 	public Node(bool _walkable, Vector3 _worldPos, int _gridX, int _gridY) {
 		walkable = _walkable;
+		tmpUnWalkable = false;
 		worldPosition = _worldPos;
 		gridX = _gridX;
 		gridY = _gridY;

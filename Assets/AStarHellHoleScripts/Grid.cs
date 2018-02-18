@@ -49,34 +49,24 @@ public class Grid : MonoBehaviour
 		}
 	}
 
+	//Evaluates gridPos to see if they are within the grid
 	public List<Node> GetNeighbours(Node node)
 	{
-		List<Node> neighbours = new List<Node> ();
+		List<Node> neighbours = new List<Node> (); //Create List of nodes, can this be an array
+		int nX = node.gridX;
+		int nY = node.gridY;
 
-		for (int y = -1; y <= 1; y++) {
-			if (y == 0)
-				continue;
-			int checkY = node.gridY + y;
-			int checkX = node.gridX;
-			if (checkY >= 0 && checkY < gridSizeX) {
-				neighbours.Add (grid [checkX, checkY]);
-			}
-		}
-
-		for (int x = -1; x <= 1; x++) {
-			if (x == 0)
-				continue;
-			int checkY = node.gridY;
-			int checkX = node.gridX + x;
-			if (checkX >= 0 && checkX < gridSizeX) {
-				neighbours.Add (grid [checkX, checkY]);
-			}
-		}
-
+		if((nX + 1)   <= gridSizeX)
+			neighbours.Add (grid [nX + 1, nY]);
+		if((nX - 1)   <= gridSizeX)
+			neighbours.Add (grid [nX - 1, nY]);
+		if((nY + 1)   <= gridSizeY)
+			neighbours.Add (grid [nX, nY + 1]);
+		if((nY - 1)   <= gridSizeY)
+			neighbours.Add (grid [nX, nY - 1]);
 		return neighbours;
 	}
-
-
+		
 	public Node NodeFromWorldPoint(Vector3 worldPosition)
 	{
 		float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;

@@ -37,6 +37,8 @@ public class SelectionCursor : MonoBehaviour {
 				if (currentlySelectedUnit != null && currentlySelectedUnit.movementLeft > 0)
 					currentlySelectedUnit.SetMovement (hit.point);
 			} else if (hit.collider.tag == "Player") {
+				if (currentlySelectedUnit != null)
+					currentlySelectedUnit.deselectedUnit ();
 				UnitSelection(hit);  //Attempt to select the unit, or select it
 			}else if (hit.collider.tag == "Charge"){
 				if (currentlySelectedUnit != null && !currentlySelectedUnit.chargedDuringAction)

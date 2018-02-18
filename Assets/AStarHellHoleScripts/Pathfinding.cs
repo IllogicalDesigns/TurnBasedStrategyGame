@@ -25,19 +25,18 @@ public class Pathfinding : MonoBehaviour
 
 	IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
 	{
-
 		Vector3[] waypoints = new Vector3[0];
 		bool pathSuccess = false;
 		
 		Node startNode = grid.NodeFromWorldPoint (startPos);
 		Node targetNode = grid.NodeFromWorldPoint (targetPos);
-		
-		
+
+
 		if (startNode.walkable && targetNode.walkable) {
 			Heap<Node> openSet = new Heap<Node> (grid.MaxSize);
 			HashSet<Node> closedSet = new HashSet<Node> ();
 			openSet.Add (startNode);
-			
+
 			while (openSet.Count > 0) {
 				Node currentNode = openSet.RemoveFirst ();
 				closedSet.Add (currentNode);
@@ -58,8 +57,9 @@ public class Pathfinding : MonoBehaviour
 						neighbour.hCost = GetDistance (neighbour, targetNode);
 						neighbour.parent = currentNode;
 						
-						if (!openSet.Contains (neighbour))
+						if (!openSet.Contains (neighbour)) {
 							openSet.Add (neighbour);
+						}
 					}
 				}
 			}
@@ -69,7 +69,6 @@ public class Pathfinding : MonoBehaviour
 			waypoints = RetracePath (startNode, targetNode);
 		}
 		requestManager.FinishedProcessingPath (waypoints, pathSuccess);
-		
 	}
 
 	Vector3[] RetracePath(Node startNode, Node endNode)
@@ -79,7 +78,6 @@ public class Pathfinding : MonoBehaviour
 		path.Add (startNode);
 		path.Add (endNode);  //Required to actually make it to destination
 
-		
 		while (currentNode != startNode) {
 			path.Add (currentNode);
 			currentNode = currentNode.parent;
@@ -89,7 +87,6 @@ public class Pathfinding : MonoBehaviour
 		Array.Reverse (waypoints);
 		wayPointDebug = waypoints;
 		return waypoints;
-		
 	}
 
 	Vector3[] ConvertListONodesToVec3Array(List<Node> path)
@@ -117,6 +114,7 @@ public class Pathfinding : MonoBehaviour
 		}
 		return waypoints.ToArray ();
 	}
+		
 
 	int GetDistance(Node nodeA, Node nodeB)
 	{

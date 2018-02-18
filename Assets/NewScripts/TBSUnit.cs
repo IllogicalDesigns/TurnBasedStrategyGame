@@ -30,7 +30,7 @@ public class TBSUnit : MonoBehaviour
 	public Node previosUnWalkableNode;
 
 	GameObject gridObject;
-	int nodeSize = 2; //Used for movement grid
+	int nodeSize = 1; //Used for movement grid
 	bool[,] visitedRowCol;
 	List<GameObject> previousGridObjs = new List<GameObject> ();
 
@@ -59,7 +59,7 @@ public class TBSUnit : MonoBehaviour
 		arrowHead = m_Player.arrowHead;
 		gridObject = m_Player.gridObject;
 		previosUnWalkableNode = myGrid.NodeFromWorldPoint (transform.position);
-		previosUnWalkableNode.walkable = false;
+		//previosUnWalkableNode.walkable = false;
 	}
 
 	void UnitWasSelected()
@@ -70,6 +70,12 @@ public class TBSUnit : MonoBehaviour
 		m_Player.updateMoveLeftSlider (movementLeft);
 		createUnitGrid (transform.position, movementLeft);
 		//Setup highlighted grid nodes
+	}
+
+	public void deselectedUnit()
+	{
+		m_Player.setTarCircle (new Vector3 (transform.position.x, transform.position.y - circleOffset, transform.position.z), false);
+		destroyPreviousUnitGrid();
 	}
 
 	//Accepts a command to display a new possible position, TODO return a failed and deal with it
@@ -83,7 +89,7 @@ public class TBSUnit : MonoBehaviour
 			//m_TarX = tarNode.worldPosition;
 			//targetCircle.transform.position = new Vector3 (target.x, target.y + 0.1f, target.z);
 			//m_TarX.SetActive (true);
-			previosUnWalkableNode.walkable = true;
+			//previosUnWalkableNode.walkable = true;
 			PathRequestManager.RequestPath (transform.position, tar, OnPathFound);
 			m_Player.setConfirmButton (this, true);
 		}
@@ -91,6 +97,7 @@ public class TBSUnit : MonoBehaviour
 
 	public void MoveUnitToConfirmedMovement()
 	{
+		destroyPreviousUnitGrid ();
 		destroyOldChargeArrows ();
 		m_Player.activatedUnit = this;
 		m_Player.setConfirmButton (this, false);
@@ -104,7 +111,7 @@ public class TBSUnit : MonoBehaviour
 	public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
 	{
 		int pathLen = newPath.Length - 1;
-		previosUnWalkableNode.walkable = false;
+		//previosUnWalkableNode.walkable = false;
 		if (pathLen <= movementLeft) {
 			if (pathSuccessful) {
 				Debug.Log ("Path Cost " + (pathLen));
@@ -154,9 +161,9 @@ public class TBSUnit : MonoBehaviour
 
 	IEnumerator moveThroughPath(Vector3[] _path)
 	{
-		previosUnWalkableNode.walkable = true;
+		//previosUnWalkableNode.walkable = true;
 		previosUnWalkableNode = myGrid.NodeFromWorldPoint (_path [_path.Length-1]);
-		previosUnWalkableNode.walkable = false;
+		//previosUnWalkableNode.walkable = false;
 
 		moving = true;
 		Vector3 currentWaypoint = _path [0];
@@ -284,13 +291,12 @@ public class TBSUnit : MonoBehaviour
 	}
 	void createUnitGrid(Vector3 startPos, int pathLength)
 	{
-		Debug.Log ("Called");
-		//Vector2 wrld = myGrid.gridWorldSize;  //Clear the visited flag array????
 		visitedRowCol = new bool[Mathf.RoundToInt (myGrid.gridWorldSize.x), Mathf.RoundToInt (myGrid.gridWorldSize.y)];
 		previousGridObjs.Clear ();
 		Node startNode = myGrid.NodeFromWorldPoint (startPos);
-		previosUnWalkableNode.walkable = true;
+		//previosUnWalkableNode.walkable = true;
 		StartCoroutine(crtUGridSub(startPos, 0));
+		//previosUnWalkableNode.walkable = false;
 	}
 
 	IEnumerator crtUGridSub(Vector3 nodePos, int depth)
@@ -300,7 +306,7 @@ public class TBSUnit : MonoBehaviour
 
 			visitedRowCol [Mathf.RoundToInt (node.gridX), Mathf.RoundToInt (node.gridY)] = true;
 			if (depth != 0) {
-				previousGridObjs.Add (Instantiate (gridObject, new Vector3 (node.worldPosition.x, node.worldPosition.y + 0.3f, node.worldPosition.z), gridObject.transform.rotation) as GameObject);
+				previousGridObjs.Add (Instantiate (gridObject, new Vector3 (node.worldPosition.x, node.worldPosition.y + 0.15f, node.worldPosition.z), gridObject.transform.rotation) as GameObject);
 			}
 			yield return new WaitForSeconds (0.000005f);
 
