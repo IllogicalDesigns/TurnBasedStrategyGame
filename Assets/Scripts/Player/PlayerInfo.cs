@@ -26,8 +26,8 @@ public class PlayerInfo : MonoBehaviour
 	public GameObject gridObject;
 	TurnController myTurnManager;
 
-	[SerializeField] Material activeColor;
-	[SerializeField] Material deactiveColor;
+	public Material activeColor;
+	public Material deactiveColor;
 	[SerializeField] GameObject LostBanner;
 
 	// Use this for initialization
@@ -114,9 +114,12 @@ public class PlayerInfo : MonoBehaviour
 
 	public void setChargeButton(TBSUnit caller, bool enabled)
 	{
-		chargeButton.gameObject.SetActive (enabled);
-		chargeButton.onClick.RemoveAllListeners ();
-		chargeButton.onClick.AddListener (caller.displayChargeOptions);
+        if (chargeButton != null)
+        {
+            chargeButton.gameObject.SetActive(enabled);
+            chargeButton.onClick.RemoveAllListeners();
+            chargeButton.onClick.AddListener(caller.displayActionGUIHelpers);
+        }
 	}
 
 	public void RemoveDeadUnit (TBSUnit deadUnit) {

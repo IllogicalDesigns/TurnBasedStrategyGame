@@ -22,4 +22,11 @@ public abstract class UnitAction : MonoBehaviour {
 	//Performs the action
 	public virtual void PerformAction () {
 	}
+    public virtual void influenceHeatMap(Grid m_Grid, Node n)
+    {
+    }
+    public virtual valuedNode[] EvalFunctForAi(Node nPos)
+    {
+        return null;
+    }
 }

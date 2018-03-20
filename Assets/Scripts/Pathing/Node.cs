@@ -1,28 +1,54 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Node : IHeapItem<Node> {
 	
 	public bool walkable;
-	public bool tmpUnWalkable; //possible flag to prevent units from moving through other units
+	public bool occupied; //possible flag to prevent units from moving through other units
 	public Vector3 worldPosition;
 	public int gridX;
 	public int gridY;
 
 	public int gCost;
 	public int hCost;
-	public Node parent;
+    int staticThreatLvl = 0;
+    int addThreatLvl = 0;
+    public Node parent;
 	int heapIndex;
 	
 	public Node(bool _walkable, Vector3 _worldPos, int _gridX, int _gridY) {
 		walkable = _walkable;
-		tmpUnWalkable = false;
+		occupied = false;
 		worldPosition = _worldPos;
 		gridX = _gridX;
 		gridY = _gridY;
-	}
+    }
 
-	public int fCost {
+    public int threatLvl
+    {
+        get
+        {
+            return staticThreatLvl + addThreatLvl;
+        }
+    }
+
+    public void setStaticThreatLvl(int threatLvl)
+    {
+        staticThreatLvl = threatLvl;
+    }
+
+    public void addAddThreatLvl(int threatLvl)
+    {
+        setAddThreatLvl(addThreatLvl + threatLvl);
+    }
+
+    public void setAddThreatLvl(int threatLvl)
+    {
+        addThreatLvl = threatLvl;
+    }
+
+    public int fCost {
 		get {
 			return gCost + hCost;
 		}

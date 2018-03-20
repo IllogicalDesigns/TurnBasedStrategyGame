@@ -32,7 +32,7 @@ public class Pathfinding : MonoBehaviour
 		Node targetNode = grid.NodeFromWorldPoint (targetPos);
 
 
-		if (startNode.walkable && targetNode.walkable) {
+		if (startNode.walkable && !startNode.occupied && targetNode.walkable && !targetNode.occupied) {
 			Heap<Node> openSet = new Heap<Node> (grid.MaxSize);
 			HashSet<Node> closedSet = new HashSet<Node> ();
 			openSet.Add (startNode);
@@ -47,7 +47,7 @@ public class Pathfinding : MonoBehaviour
 				}
 				
 				foreach (Node neighbour in grid.GetNeighbours(currentNode)) {
-					if (!neighbour.walkable || closedSet.Contains (neighbour)) {
+					if (!neighbour.walkable || neighbour.occupied || closedSet.Contains (neighbour)) {
 						continue;
 					}
 					

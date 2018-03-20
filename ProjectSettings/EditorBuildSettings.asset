@@ -5,6 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
+  - enabled: 0
+    path: Assets/Levels/OfflineMap.unity
+    guid: c750bdb935a7fca478c30345f5ba8a68
   - enabled: 1
-    path: Assets/1.unity
-    guid: 61a63b6adb23c854bad420b2552681de
+    path: Assets/Levels/NetworkMap.unity
+    guid: fa2bc5095b261484ea33abb892bfa2d6
+  m_configObjects: {}

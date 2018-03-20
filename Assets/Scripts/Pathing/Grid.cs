@@ -29,7 +29,17 @@ public class Grid : MonoBehaviour
 		}
 	}
 
-	void CreateGrid()
+    public Node[,] getNodeArray()
+    {
+        return grid;
+    }
+
+    public Vector2 getGridSize()
+    {
+        return new Vector2(gridSizeX, gridSizeY);
+    }
+
+    void CreateGrid()
 	{
 		grid = new Node[gridSizeX, gridSizeY];
 		Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
@@ -45,7 +55,8 @@ public class Grid : MonoBehaviour
 					walkable = false;
 				}
 				grid [x, y] = new Node (walkable, worldPoint, x, y);
-			}
+                //StartCoroutine(grid[x, y].calculateStaticThreatLvl(this));
+            }
 		}
 	}
 
@@ -84,8 +95,34 @@ public class Grid : MonoBehaviour
 		Gizmos.DrawWireCube (transform.position, new Vector3 (gridWorldSize.x, 1, gridWorldSize.y));
 		if (grid != null && displayGridGizmos) {
 			foreach (Node n in grid) {
-				Gizmos.color = (n.walkable) ? Color.white : Color.red;
-				Gizmos.DrawWireCube (n.worldPosition, Vector3.one * (nodeDiameter));
+				if (n.walkable && !n.occupied) {
+                    if (n.threatLvl >= 1 && n.threatLvl < 3)
+                    {
+                        Gizmos.color = Color.yellow;
+                        Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 2));
+                    }
+                    else if (n.threatLvl >= 3 && n.threatLvl < 6)
+                    {
+                        Gizmos.color = Color.magenta;
+                        Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 2));
+                    }
+                    else if (n.threatLvl >= 6)
+                    {
+                        Gizmos.color = Color.blue;
+                        Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 2));
+                    }
+                    else
+                    {
+                        Gizmos.color = Color.white;
+                        Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter));
+                    }
+				} else if (n.occupied && n.walkable) {
+					Gizmos.color = Color.black;
+					Gizmos.DrawWireCube (n.worldPosition, Vector3.one * (nodeDiameter/2));
+				} else {
+					Gizmos.color = Color.red;
+					Gizmos.DrawWireCube (n.worldPosition, Vector3.one * (nodeDiameter/2));
+				}
 			}
 		}
 	}

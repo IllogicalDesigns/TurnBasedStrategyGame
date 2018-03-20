@@ -11,12 +11,12 @@ public class NetSelectionCursor : NetworkBehaviour {
 	Camera m_Cam;  //Main Cam Reference
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		m_Cam = gameObject.GetComponentInChildren<Camera> ();  //Setup the main camera reference for raycasting
-	}
+    }
 
 	void OnConnectedToServer () {
-
+        Debug.Log("Connected");
 	}
 
 	void UnitSelection(RaycastHit hit){
@@ -30,7 +30,6 @@ public class NetSelectionCursor : NetworkBehaviour {
 			currentlySelectedUnit = null;
 		}
 	}
-
 
 	void SelectionCast()
 	{
@@ -58,5 +57,5 @@ public class NetSelectionCursor : NetworkBehaviour {
 		if (Input.GetMouseButtonDown (0)) {
 			SelectionCast ();
 		}
-	}
+    }
 }

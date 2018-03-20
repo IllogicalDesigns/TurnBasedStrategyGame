@@ -1,9 +1,59 @@
 fileFormatVersion: 2
-guid: 5d4faa13297c6e84981b1879a02cec64
+guid: f4bd8abdebc6d264a81fec1f129b1d1d
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
+    100000: //RootNode
+    100002: BridgeSupports
+    100004: BridgeTop
+    100006: BridgeTopSiding
+    100008: Lava
+    100010: BridgeTop.001
+    100012: BridgeTop.002
+    400000: //RootNode
+    400002: BridgeSupports
+    400004: BridgeTop
+    400006: BridgeTopSiding
+    400008: Lava
+    400010: BridgeTop.001
+    400012: BridgeTop.002
+    2100000: No Name
+    2300000: BridgeSupports
+    2300002: BridgeTop
+    2300004: BridgeTopSiding
+    2300006: Lava
+    2300008: BridgeTop.001
+    2300010: BridgeTop.002
+    3300000: BridgeSupports
+    3300002: BridgeTop
+    3300004: BridgeTopSiding
+    3300006: Lava
+    3300008: BridgeTop.001
+    3300010: BridgeTop.002
+    4300000: BridgeSupports
+    4300002: Lava
+    4300004: BridgeTopSiding
+    4300006: BridgeTop
+    4300008: BridgeTop.001
+    4300010: BridgeTop.002
+    6400000: BridgeSupports
+    6400002: BridgeTop
+    6400004: BridgeTopSiding
+    6400006: Lava
+    6400008: BridgeTop.001
+    6400010: BridgeTop.002
     2186277476908879412: ImportLogs
+    2186277476908879414: ImportLogs
+    2186277476908879416: ImportLogs
+    2186277476908879418: ImportLogs
+    2186277476908879420: ImportLogs
+    2186277476908879422: ImportLogs
+    2186277476908879424: ImportLogs
+    2186277476908879426: ImportLogs
+    2186277476908879428: ImportLogs
+    2186277476908879430: ImportLogs
+    2186277476908879432: ImportLogs
+    2186277476908879434: ImportLogs
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -37,13 +87,13 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     importVisibility: 1
     importBlendShapes: 1
-    importCameras: 1
-    importLights: 1
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     optimizeMeshForGPU: 1
     keepQuads: 0
@@ -79,7 +129,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

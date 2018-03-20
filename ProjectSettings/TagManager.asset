@@ -10,6 +10,7 @@ TagManager:
   - Charge
   - UnitButtons
   - Pushable
+  - aiPlayer
   layers:
   - Default
   - TransparentFX

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SelectionCursor : MonoBehaviour {
 	[SerializeField] LayerMask selectable;  //What can we select, grid, units, special
@@ -26,7 +24,7 @@ public class SelectionCursor : MonoBehaviour {
 	}
 
 
-	void SelectionCast()
+	public void SelectionCast()
 	{
 		Ray myRay = m_Cam.ScreenPointToRay (Input.mousePosition);  //Create a ray from the main camera using the mouse pointer
 		RaycastHit hit;
@@ -42,7 +40,7 @@ public class SelectionCursor : MonoBehaviour {
 				UnitSelection(hit);  //Attempt to select the unit, or select it
 			}else if (hit.collider.tag == "Charge"){
 				if (currentlySelectedUnit != null && !currentlySelectedUnit.chargedDuringAction)
-					currentlySelectedUnit.moveToChargeLocation (hit.collider.gameObject.transform.position);
+					currentlySelectedUnit.SendMessage ("Charge", hit.transform.position);
 			} else {
 				Debug.Log ("No logic for " + hit.collider.name.ToString () + " in Select And Move");
 			}
