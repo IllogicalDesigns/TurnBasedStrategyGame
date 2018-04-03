@@ -104,6 +104,7 @@ public class CalculateHeatMap : MonoBehaviour {
     public IEnumerator recalAddThreatLvlCoRutine()
     {
         foreach (TBSUnit u in enemies) {
+            if(u != null)
             u.influenceHeatMap();
         }
         yield return null;

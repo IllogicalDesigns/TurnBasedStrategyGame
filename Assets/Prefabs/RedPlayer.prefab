@@ -1193,6 +1193,7 @@ MonoBehaviour:
   arrowHead: {fileID: 1494547643417962, guid: 0fa6577f580f313469eb2f11ce60e018, type: 2}
   tarPos: {x: 0, y: 0, z: 0}
   chargeDistange: 5
+  ownerInt: 0
 --- !u!114 &114006620450379162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1592,6 +1593,7 @@ MonoBehaviour:
   arrowHead: {fileID: 1494547643417962, guid: 0fa6577f580f313469eb2f11ce60e018, type: 2}
   tarPos: {x: 0, y: 0, z: 0}
   chargeDistange: 5
+  ownerInt: 0
 --- !u!114 &114516340366636868
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1876,6 +1878,7 @@ MonoBehaviour:
   arrowHead: {fileID: 1494547643417962, guid: 0fa6577f580f313469eb2f11ce60e018, type: 2}
   tarPos: {x: 0, y: 0, z: 0}
   chargeDistange: 5
+  ownerInt: 0
 --- !u!114 &114690420590918964
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2232,6 +2235,7 @@ MonoBehaviour:
   arrowHead: {fileID: 1494547643417962, guid: 0fa6577f580f313469eb2f11ce60e018, type: 2}
   tarPos: {x: 0, y: 0, z: 0}
   chargeDistange: 5
+  ownerInt: 0
 --- !u!114 &114941260003861744
 MonoBehaviour:
   m_ObjectHideFlags: 1

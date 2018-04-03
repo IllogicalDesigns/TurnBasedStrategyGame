@@ -12,7 +12,7 @@ public class ChargeAction : UnitAction {
 	List<GameObject> currCharArrows = new List<GameObject> ();
     int chrgDistance = 5;
     int enemyInt = 0;
-    int ownerInt = 0;
+    public int ownerInt = 0;
     AIUnit uAi;
 
 
@@ -133,15 +133,19 @@ public class ChargeAction : UnitAction {
 		StartCoroutine (chargePusher (newPos));
 	}
 
-    public override valuedNode[] EvalFunctForAi(Node nPos)
+    public override valuedNode[] EvalFunctForAi(Node nPos, Vector3 tar)
     {
         valuedNode[] finalNodes = new valuedNode[4];
         if(uAi == null)
             uAi = GetComponent<AIUnit>();
         finalNodes[0] = chargeDirEval(nPos, Vector3.forward);
+        finalNodes[0].value += Mathf.RoundToInt(Vector3.Distance(finalNodes[0].endNode.worldPosition, tar));
         finalNodes[1] = chargeDirEval(nPos, Vector3.back);
+        finalNodes[1].value += Mathf.RoundToInt(Vector3.Distance(finalNodes[1].endNode.worldPosition, tar));
         finalNodes[2] = chargeDirEval(nPos, Vector3.left);
+        finalNodes[2].value += Mathf.RoundToInt(Vector3.Distance(finalNodes[2].endNode.worldPosition, tar));
         finalNodes[3] = chargeDirEval(nPos, Vector3.right);
+        finalNodes[3].value += Mathf.RoundToInt(Vector3.Distance(finalNodes[3].endNode.worldPosition, tar));
         return finalNodes;
     }
 
@@ -174,7 +178,7 @@ public class ChargeAction : UnitAction {
             {
                 if (hit.collider.GetComponent<TBSUnit>().whoOwnsMe() != ownerInt && ReachesAnEdge)
                 {
-                    //Debug.DrawRay(new Vector3(startPos.worldPosition.x, startPos.worldPosition.y + 0.5f, startPos.worldPosition.z), dir * chargeDistange, Color.red, 5);
+                    Debug.DrawRay(new Vector3(startPos.worldPosition.x, startPos.worldPosition.y + 0.5f, startPos.worldPosition.z), dir * chargeDistange, Color.green, 5);
                     Debug.Log("Reached occupied and hit : " + hit.collider.name);
                     return new valuedNode(tmpNode.threatLvl - 30, tmpNode, startPos);
                 }
@@ -183,16 +187,16 @@ public class ChargeAction : UnitAction {
             {
                 if (hit.collider.GetComponent<AIUnit>().whoOwnsMe() != ownerInt && ReachesAnEdge)
                 {
-                    //Debug.DrawRay(new Vector3(startPos.worldPosition.x, startPos.worldPosition.y + 0.5f, startPos.worldPosition.z), dir * chargeDistange, Color.red, 5);
+                    Debug.DrawRay(new Vector3(startPos.worldPosition.x, startPos.worldPosition.y + 0.5f, startPos.worldPosition.z), dir * chargeDistange, Color.red, 5);
                     Debug.Log("Reached occupied and hit : " + hit.collider.name);
-                    return new valuedNode(tmpNode.threatLvl - 30, tmpNode, startPos);
+                    return new valuedNode(tmpNode.threatLvl + 9999, tmpNode, startPos);
                 }
             }
         }
         if (!tmpNode.occupied)
             return new valuedNode(tmpNode.threatLvl, tmpNode, startPos);
         else
-            return new valuedNode(tmpNode.threatLvl + 999, tmpNode, startPos);  //TODO prune these nodes later
+            return new valuedNode(tmpNode.threatLvl + 9999, tmpNode, startPos);  //TODO prune these nodes later
     }
 
     IEnumerator moveThroughPath(Vector3[] _path)
@@ -248,7 +252,15 @@ public class ChargeAction : UnitAction {
                         TBSUnit tmpUnit = hit.collider.GetComponent<TBSUnit>();
                         if (tmpUnit.whoOwnsMe() != ownerInt)
                         {
-                            hit.collider.GetComponent<TBSUnit>().Pushed(newPos, chargDir);
+                            tmpUnit.Pushed(newPos, chargDir);
+                        }
+                    }
+                    else if (hit.collider.tag == "aiPlayer")
+                    {
+                        AIUnit tmpAIUnit = hit.collider.GetComponent<AIUnit>();
+                        if (tmpAIUnit.whoOwnsMe() != ownerInt)
+                        {
+                            tmpAIUnit.Pushed(newPos, chargDir);
                         }
                     }
                     else if (hit.collider.tag == "Pushable")

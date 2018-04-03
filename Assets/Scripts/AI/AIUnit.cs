@@ -94,7 +94,7 @@ public class AIUnit : MonoBehaviour {
         nodeWithValues.Clear();
 
         //Find all accessable nodes
-        createUnitGrid(transform.position, movement);
+        evalUnitNodes(transform.position, movement);
 
         //Foreach node get the node's worth
         foreach(Node n in nodeForEval)
@@ -124,10 +124,10 @@ public class AIUnit : MonoBehaviour {
     void locationEval(Node nPos)
     {
         justREturnedPath = false;
-        int totalValue = 0; //Lower is better
-        totalValue += Mathf.RoundToInt((5 * Vector3.Distance(transform.position, target.position)));  //Replace with Astar?
+        //int totalValue = 0; //Lower is better
+        //totalValue += Mathf.RoundToInt((10 * Vector3.Distance(transform.position, target.position)));  //Replace with Astar?
         //Evaluate our action funtion from this position and subtract this
-        nodeWithValues.AddRange(m_Action.EvalFunctForAi(nPos)); 
+        nodeWithValues.AddRange(m_Action.EvalFunctForAi(nPos, target.position)); 
     }
 
     IEnumerator nodeEval(Node n)
@@ -145,7 +145,7 @@ public class AIUnit : MonoBehaviour {
         }
     }
 
-    void createUnitGrid(Vector3 startPos, int pathLength)
+    void evalUnitNodes(Vector3 startPos, int pathLength)
     {
         nodeForEval.Clear();
         visitedRowCol = new bool[Mathf.RoundToInt(m_grid.gridWorldSize.x), Mathf.RoundToInt(m_grid.gridWorldSize.y)];
@@ -227,6 +227,17 @@ public class AIUnit : MonoBehaviour {
                 crtUGridSub(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z - nodeSize), depth + 1);
             }
         }
+    }
+
+    //Can this be handles in the charge action class? from the pushing end?
+    public void Pushed(Vector3 newPos, Vector3 chargeDir)
+    {
+        newPos = newPos + (-chargeDir.normalized * 1f);
+        //if (!moving)
+        //{
+            Vector3[] tmpArray = new Vector3[] { new Vector3(newPos.x, newPos.y + (yOffset / 2), newPos.z) };
+            StartCoroutine(moveThroughPath(tmpArray));
+        //}
     }
 }
 

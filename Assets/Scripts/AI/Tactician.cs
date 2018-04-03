@@ -8,11 +8,31 @@ public class Tactician : MonoBehaviour {
     public List<valuedMoves> returned = new List<valuedMoves>();
     public int Stupidity = 2; //Must be 1
     public TurnController m_TurnController;
+    [SerializeField] bool displayGizmos = true;
 
     // Use this for initialization
     void Start () {
 		
 	}
+
+    void OnDrawGizmos()
+    {
+        if (returned.Count > 0 && displayGizmos)
+        {
+            foreach (valuedMoves n in returned)
+            {
+                if(n.value < 1)
+                    Gizmos.color = Color.green;
+                else if (n.value >= 1 && n.value <= 2)
+                    Gizmos.color = Color.yellow;
+                else if  (n.value >= 2 && n.value <= 3)
+                    Gizmos.color = Color.red;
+                else
+                    Gizmos.color = Color.black;
+                Gizmos.DrawSphere(n.node.endNode.worldPosition, 0.15f);
+            }
+        }
+    }
 
     //Starts a threaded mess to calculate the best-ish result for all AI Units
     public IEnumerator AskUnitsForBestResult()
@@ -56,11 +76,10 @@ public class Tactician : MonoBehaviour {
         Debug.DrawLine(returned[0].unit.gameObject.transform.position, returned[0].node.moveNode.worldPosition, Color.cyan, 10f);
         Debug.DrawLine(returned[0].node.moveNode.worldPosition, returned[0].node.endNode.worldPosition, Color.cyan, 10f);
         returned[0].unit.MoveToNewPos(returned[0].node.moveNode.worldPosition);
-        returned[0].unit.moving = true;
-        while (returned[0].unit.moving)
-        {
-            yield return new WaitForSeconds(1f);
-        }
+        do{
+            yield return new WaitForSeconds(0.1f);
+        } while (returned[0].unit.moving);
+        yield return new WaitForSeconds(1f);
         if (returned[0].node.endNode.worldPosition != null)
             returned[0].unit.m_Action.SendMessage("PerformAction", returned[0].node.endNode.worldPosition);
         returned[0].unit.deactivateUnit();
