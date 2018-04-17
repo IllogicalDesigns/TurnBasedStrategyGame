@@ -50,7 +50,7 @@ public class Tactician : MonoBehaviour {
         if (returned.Count > 0)
         {
             returned.Sort();
-            Debug.Log("Best choice was " + returned[0].node.moveNode.worldPosition + " Value: " + returned[0].value + " Unit: " + returned[0].unit.name);
+            //Debug.Log("Best choice was " + returned[0].node.moveNode.worldPosition + " Value: " + returned[0].value + " Unit: " + returned[0].unit.name);
             Debug.DrawRay(returned[0].node.moveNode.worldPosition, Vector3.up * 10, Color.green, 5);
         }
         else
@@ -76,10 +76,13 @@ public class Tactician : MonoBehaviour {
         Debug.DrawLine(returned[0].unit.gameObject.transform.position, returned[0].node.moveNode.worldPosition, Color.cyan, 10f);
         Debug.DrawLine(returned[0].node.moveNode.worldPosition, returned[0].node.endNode.worldPosition, Color.cyan, 10f);
         returned[0].unit.MoveToNewPos(returned[0].node.moveNode.worldPosition);
-        do{
+        do
+        {
             yield return new WaitForSeconds(0.1f);
-        } while (returned[0].unit.moving);
+        } while (returned[0].unit.moving);//&& !(Vector3.Distance(returned[0].unit.transform.position, returned[0].node.moveNode.worldPosition) < 0.1f));
         yield return new WaitForSeconds(1f);
+        //returned[0].unit.transform.position = returned[0].node.moveNode.worldPosition;
+        Debug.Log("Moving to end node, if avaliable!");
         if (returned[0].node.endNode.worldPosition != null)
             returned[0].unit.m_Action.SendMessage("PerformAction", returned[0].node.endNode.worldPosition);
         returned[0].unit.deactivateUnit();

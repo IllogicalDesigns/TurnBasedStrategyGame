@@ -156,6 +156,7 @@ public class AIUnit : MonoBehaviour {
 
     IEnumerator moveThroughPath(Vector3[] _path)
     {
+        targetIndex = 0;
         moving = true;
         Vector3 currentWaypoint = _path[0];
         while (true)
@@ -163,6 +164,7 @@ public class AIUnit : MonoBehaviour {
             if (transform.position == new Vector3(currentWaypoint.x, currentWaypoint.y + yOffset, currentWaypoint.z))
             {
                 targetIndex++;
+                Debug.Log(targetIndex + " : " + transform.position + new Vector3(currentWaypoint.x, currentWaypoint.y + yOffset, currentWaypoint.z));
                 if (targetIndex >= _path.Length)
                 {
                     updateOccupiedNode();
@@ -194,7 +196,7 @@ public class AIUnit : MonoBehaviour {
         }
         else
         {
-            Debug.Log("Something is under us!");
+            //Debug.Log("Something is under us!");
         }
     }
 

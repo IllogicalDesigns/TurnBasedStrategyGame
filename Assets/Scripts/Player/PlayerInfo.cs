@@ -76,6 +76,7 @@ public class PlayerInfo : MonoBehaviour
 		targetCircle.SetActive (false);
 		targetCross.SetActive (false);
 		confirmButton.gameObject.SetActive (false);
+        if(chargeButton != null)
 		chargeButton.gameObject.SetActive (false);
 
 		if(activeUnits.Count <= 0)

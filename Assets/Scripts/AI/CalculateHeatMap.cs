@@ -90,7 +90,6 @@ public class CalculateHeatMap : MonoBehaviour {
 
     public void recalAddThreatLvl()
     {
-        Debug.Log("recalAddThreatLvl");
         for (int x = 0; x < gridSizeX; x++)
         {
             for (int y = 0; y < gridSizeY; y++)

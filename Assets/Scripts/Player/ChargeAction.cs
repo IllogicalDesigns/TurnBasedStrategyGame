@@ -179,7 +179,7 @@ public class ChargeAction : UnitAction {
                 if (hit.collider.GetComponent<TBSUnit>().whoOwnsMe() != ownerInt && ReachesAnEdge)
                 {
                     Debug.DrawRay(new Vector3(startPos.worldPosition.x, startPos.worldPosition.y + 0.5f, startPos.worldPosition.z), dir * chargeDistange, Color.green, 5);
-                    Debug.Log("Reached occupied and hit : " + hit.collider.name);
+                    //Debug.Log("Reached occupied and hit : " + hit.collider.name);
                     return new valuedNode(tmpNode.threatLvl - 30, tmpNode, startPos);
                 }
             }
@@ -188,7 +188,7 @@ public class ChargeAction : UnitAction {
                 if (hit.collider.GetComponent<AIUnit>().whoOwnsMe() != ownerInt && ReachesAnEdge)
                 {
                     Debug.DrawRay(new Vector3(startPos.worldPosition.x, startPos.worldPosition.y + 0.5f, startPos.worldPosition.z), dir * chargeDistange, Color.red, 5);
-                    Debug.Log("Reached occupied and hit : " + hit.collider.name);
+                    //Debug.Log("Reached occupied and hit : " + hit.collider.name);
                     return new valuedNode(tmpNode.threatLvl + 9999, tmpNode, startPos);
                 }
             }
@@ -281,7 +281,7 @@ public class ChargeAction : UnitAction {
                 Debug.DrawRay(transform.position, -chargDir.normalized * 1f, Color.black);
                 if (Physics.Raycast(transform.position, -chargDir.normalized, out hit, 1f))
                 {
-                    Debug.Log(hit.collider.name);
+                    //Debug.Log(hit.collider.name);
                     if (hit.collider.tag == "Player")
                     {
                         TBSUnit tmpUnit = hit.collider.GetComponent<TBSUnit>();
