@@ -15,7 +15,6 @@ public class SelectionCursor : MonoBehaviour {
 		currentlySelectedUnit = hit.collider.gameObject.GetComponent<TBSUnit>();  //Set our current unit to the attempted selection
 
 		if (currentlySelectedUnit.SelectUnit ()) {
-			Debug.Log ("Select this unit " + hit.collider.name.ToString ());  
 		}
 		else {
 			Debug.Log ("Unable to Select this unit " + hit.collider.name.ToString ());

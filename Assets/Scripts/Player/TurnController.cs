@@ -15,7 +15,7 @@ public class TurnController : MonoBehaviour {
     }
 
     IEnumerator turnCoRoutine () {
-        calHeatMap.recalAddThreatLvl();
+        yield return StartCoroutine(calHeatMap.recalAddThreatLvlCoRutine());
         playerTurns[playerTurnNumber - 1].Invoke();
         playerTurnNumber++;
         yield return new WaitForSecondsRealtime(2f);

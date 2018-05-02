@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tactician : MonoBehaviour {
+public class Tactician : MonoBehaviour
+{
     public List<AIUnit> allSubordinates = new List<AIUnit>();
     public List<AIUnit> activeSubordinates = new List<AIUnit>();
     public List<valuedMoves> returned = new List<valuedMoves>();
@@ -11,9 +12,10 @@ public class Tactician : MonoBehaviour {
     [SerializeField] bool displayGizmos = true;
 
     // Use this for initialization
-    void Start () {
-		
-	}
+    void Start()
+    {
+
+    }
 
     void OnDrawGizmos()
     {
@@ -21,11 +23,11 @@ public class Tactician : MonoBehaviour {
         {
             foreach (valuedMoves n in returned)
             {
-                if(n.value < 1)
+                if (n.value < 1)
                     Gizmos.color = Color.green;
                 else if (n.value >= 1 && n.value <= 2)
                     Gizmos.color = Color.yellow;
-                else if  (n.value >= 2 && n.value <= 3)
+                else if (n.value >= 2 && n.value <= 3)
                     Gizmos.color = Color.red;
                 else
                     Gizmos.color = Color.black;
@@ -41,8 +43,11 @@ public class Tactician : MonoBehaviour {
         foreach (AIUnit ai in activeSubordinates)
         {
             //Ask for them to eval all actions
-            yield return StartCoroutine(ai.FindBestIshPath(Stupidity));
-            for(int i = 0; i < ai.nodeWithValues.Count && i < Stupidity; i++)
+            if (ai.gameObject.activeInHierarchy) {
+                yield return StartCoroutine(ai.FindBestIshPath(Stupidity));
+            }
+            //yield return StartCoroutine(ai.FindBestIshPath(Stupidity));
+            for (int i = 0; i < ai.nodeWithValues.Count && i < Stupidity; i++)
             {
                 returned.Add(new valuedMoves(ai.nodeWithValues[i].value, ai.nodeWithValues[i], ai));
             }
@@ -51,7 +56,12 @@ public class Tactician : MonoBehaviour {
         {
             returned.Sort();
             //Debug.Log("Best choice was " + returned[0].node.moveNode.worldPosition + " Value: " + returned[0].value + " Unit: " + returned[0].unit.name);
-            Debug.DrawRay(returned[0].node.moveNode.worldPosition, Vector3.up * 10, Color.green, 5);
+            //Debug.DrawRay(returned[0].node.moveNode.worldPosition, Vector3.up * 10, Color.green, 5);
+            foreach (valuedMoves vM in returned)
+            {
+               // Debug.Log("name:" + vM.unit.gameObject.name + " value:" + vM.value + " Node:" + vM.node.moveNode.worldPosition +" :" +
+                   // vM.node.endNode.worldPosition + " ");
+            }
         }
         else
             Debug.LogError("The returned list of actions is empty");
@@ -62,15 +72,16 @@ public class Tactician : MonoBehaviour {
         if (activeSubordinates.Count == 0)
         {
             activeSubordinates.AddRange(allSubordinates);
-            foreach(AIUnit a in activeSubordinates)
+            foreach (AIUnit a in activeSubordinates)
             {
-                a.activateUnit();
+                if (a.gameObject.activeInHierarchy)
+                    a.activateUnit();
             }
         }
         StartCoroutine(turnTaker());
     }
 
-    IEnumerator turnTaker ()
+    IEnumerator turnTaker()
     {
         yield return StartCoroutine(AskUnitsForBestResult());
         Debug.DrawLine(returned[0].unit.gameObject.transform.position, returned[0].node.moveNode.worldPosition, Color.cyan, 10f);
@@ -82,11 +93,10 @@ public class Tactician : MonoBehaviour {
         } while (returned[0].unit.moving);//&& !(Vector3.Distance(returned[0].unit.transform.position, returned[0].node.moveNode.worldPosition) < 0.1f));
         yield return new WaitForSeconds(1f);
         //returned[0].unit.transform.position = returned[0].node.moveNode.worldPosition;
-        Debug.Log("Moving to end node, if avaliable!");
         if (returned[0].node.endNode.worldPosition != null)
             returned[0].unit.m_Action.SendMessage("PerformAction", returned[0].node.endNode.worldPosition);
-        returned[0].unit.deactivateUnit();
-        activeSubordinates.Remove(returned[0].unit);
+        //returned[0].unit.deactivateUnit();
+        //activeSubordinates.Remove(returned[0].unit);
         m_TurnController.passTurn();
     }
 }

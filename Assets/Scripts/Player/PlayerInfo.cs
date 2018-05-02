@@ -69,7 +69,7 @@ public class PlayerInfo : MonoBehaviour
 	}
 
 	public void PassTurn () {
-		activeUnits.Remove (activatedUnit);
+		//activeUnits.Remove (activatedUnit);
 		if(activatedUnit!= null)
 		activatedUnit.movementLeft = 0;
 		activatedUnit = null;

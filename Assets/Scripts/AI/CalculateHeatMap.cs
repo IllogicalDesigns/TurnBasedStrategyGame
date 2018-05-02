@@ -16,26 +16,29 @@ public class CalculateHeatMap : MonoBehaviour {
         Vector2 gridSize = mGrid.getGridSize();
         gridSizeX = Mathf.RoundToInt(gridSize.x);
         gridSizeY = Mathf.RoundToInt(gridSize.y);
-        setupHeatMap();
+        StartCoroutine(setupHeatMap());
     }
 
-    public void setupHeatMap ()
+    public IEnumerator setupHeatMap ()
     {
         for (int x = 0; x < gridSizeX; x++)
         {
             for (int y = 0; y < gridSizeY; y++)
             {
-                if(grid[x, y].walkable)
-                    StartCoroutine(calculateStaticThreatLvl(grid[x, y]));
+                if (grid[x, y].walkable)
+                {
+                    calculateStaticThreatLvl(grid[x, y]);
+                    yield return null;
+                }
+                    //StartCoroutine(calculateStaticThreatLvl(grid[x, y]));
             }
         }
     }
 
-    public IEnumerator calculateStaticThreatLvl(Node node)
+    public void calculateStaticThreatLvl(Node node)
     {
         int totalValue = distToUnwalkable(node);  //TODO convert to new vec3 instead of vec.for, optimization
         node.setStaticThreatLvl(totalValue);
-        yield return null;
     }
 
     int distToUnwalkable(Node startPos)
@@ -102,6 +105,10 @@ public class CalculateHeatMap : MonoBehaviour {
     }
     public IEnumerator recalAddThreatLvlCoRutine()
     {
+        foreach(Node n in grid)
+        {
+            n.setAddThreatLvl(0);
+        }
         foreach (TBSUnit u in enemies) {
             if(u != null)
             u.influenceHeatMap();

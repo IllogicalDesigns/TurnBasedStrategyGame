@@ -89,18 +89,22 @@ public class AIUnit : MonoBehaviour {
 
     public IEnumerator FindBestIshPath(int rndness)
     {
+        Debug.Log(gameObject.name + " FindingBest");
         if (previosUnWalkableNode != null)
             previosUnWalkableNode.occupied = false;
         nodeWithValues.Clear();
 
         //Find all accessable nodes
-        evalUnitNodes(transform.position, movement);
+        yield return StartCoroutine(EvalUnitNodes(transform.position, movement));
 
+        Debug.Log(gameObject.name + "  NodeChecking " + nodeForEval.Count);
         //Foreach node get the node's worth
-        foreach(Node n in nodeForEval)
+        foreach (Node n in nodeForEval)
         {
+            //Debug.Log("Found Nodes " + gameObject.name);
             yield return StartCoroutine(nodeEval(n));
         }
+        Debug.Log(gameObject.name + "  NodeVals " + nodeWithValues.Count);
         //bestChoice = highestValue(nodeVals);
         nodeWithValues.Sort();  //Will this actually sort by values
         //yield return 
@@ -143,14 +147,18 @@ public class AIUnit : MonoBehaviour {
 
             updateOccupiedNode();
         }
+        else
+        {
+            nodeForEval.Remove(n);
+        }
     }
 
-    void evalUnitNodes(Vector3 startPos, int pathLength)
+    IEnumerator EvalUnitNodes(Vector3 startPos, int pathLength)
     {
         nodeForEval.Clear();
         visitedRowCol = new bool[Mathf.RoundToInt(m_grid.gridWorldSize.x), Mathf.RoundToInt(m_grid.gridWorldSize.y)];
         Node startNode = m_grid.NodeFromWorldPoint(startPos);
-        //StartCoroutine(crtUGridSub(startPos, 0));
+        yield return  StartCoroutine(crtUGridSub(startPos, 0));
         crtUGridSub(startPos, 0);
     }
 
@@ -164,7 +172,6 @@ public class AIUnit : MonoBehaviour {
             if (transform.position == new Vector3(currentWaypoint.x, currentWaypoint.y + yOffset, currentWaypoint.z))
             {
                 targetIndex++;
-                Debug.Log(targetIndex + " : " + transform.position + new Vector3(currentWaypoint.x, currentWaypoint.y + yOffset, currentWaypoint.z));
                 if (targetIndex >= _path.Length)
                 {
                     updateOccupiedNode();
@@ -208,7 +215,7 @@ public class AIUnit : MonoBehaviour {
     }
 
     //TODO Prevent race conditons in this later
-    void crtUGridSub(Vector3 nodePos, int depth)
+    IEnumerator crtUGridSub(Vector3 nodePos, int depth)
     {
         Node node = m_grid.NodeFromWorldPoint(nodePos);
         if (visitedRowCol[Mathf.RoundToInt(node.gridX), Mathf.RoundToInt(node.gridY)] == false && node.walkable && depth <= movement)
@@ -221,14 +228,17 @@ public class AIUnit : MonoBehaviour {
                 crtUGridSub(new Vector3(node.worldPosition.x - nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
                 crtUGridSub(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z + nodeSize), depth + 1);
                 crtUGridSub(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z - nodeSize), depth + 1);
+                yield return null;
             }else if (depth == 0)
             {
                 crtUGridSub(new Vector3(node.worldPosition.x + nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
                 crtUGridSub(new Vector3(node.worldPosition.x - nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
                 crtUGridSub(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z + nodeSize), depth + 1);
                 crtUGridSub(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z - nodeSize), depth + 1);
+                yield return null;
             }
         }
+        yield return null;
     }
 
     //Can this be handles in the charge action class? from the pushing end?

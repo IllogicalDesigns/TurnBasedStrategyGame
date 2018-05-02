@@ -83,7 +83,6 @@ public class TBSUnit : MonoBehaviour
 	//Accepts a command to display a new possible position, TODO return a failed and deal with it
 	public void SetMovement(Vector3 tar)
 	{
-        Debug.Log("Set Movement has been caled");
         if(performableAction != null)
 		    performableAction.CleanHelperAction();
 		//Before even checking figure out if we can actually stand there
@@ -119,13 +118,10 @@ public class TBSUnit : MonoBehaviour
 		previosUnWalkableNode.occupied = true;
 		if (pathLen <= movementLeft) {
 			if (pathSuccessful) {
-				Debug.Log ("Path Cost " + (pathLen));
 				path = newPath;
-
 				targetIndex = 0;
 				int i = pathLen;
 				Vector3 pos = newPath [i];
-
 				m_Player.updateMoveLeftSlider (movementLeft - pathLen);
 				m_Player.setTarCross (new Vector3 (pos.x, pos.y + circleOffset / 2, pos.z), true);
 			} else {
@@ -277,7 +273,6 @@ public class TBSUnit : MonoBehaviour
 			m_Player.RemoveDeadUnit (this);
 			gameObject.SetActive (false);
 		} else {
-			Debug.Log ("Something is under us!");
 		}
 	}
 
