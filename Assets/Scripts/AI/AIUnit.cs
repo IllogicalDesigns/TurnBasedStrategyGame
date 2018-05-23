@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AIUnit : MonoBehaviour {
+public class AIUnit : MonoBehaviour
+{
     public int movement = 2;
     public int movementMax = 2;
     bool[,] visitedRowCol;
@@ -32,8 +33,12 @@ public class AIUnit : MonoBehaviour {
     int targetIndex;
     float speed = 5;
 
+    [SerializeField] float stayWeight = 2f;
+    [SerializeField] float actWeight = 1f;
+
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         updateOccupiedNode();
         m_Player = gameObject.GetComponentInParent<PlayerInfo>();
         activeMat = m_Player.activeColor;
@@ -41,16 +46,17 @@ public class AIUnit : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
-		
-	}
+    void Update()
+    {
+
+    }
 
     public int whoOwnsMe()
     {
         return m_Player.ownerNumber;
     }
 
-    public void deactivateUnit ()
+    public void deactivateUnit()
     {
         gameObject.GetComponent<Renderer>().material = deactiveMat;
         movement = 0;
@@ -64,10 +70,15 @@ public class AIUnit : MonoBehaviour {
 
     public void updateOccupiedNode()
     {
-        if(previosUnWalkableNode != null)
+        if (previosUnWalkableNode != null)
             previosUnWalkableNode.occupied = false;
         previosUnWalkableNode = m_grid.NodeFromWorldPoint(transform.position);
         previosUnWalkableNode.occupied = true;
+    }
+
+    public static float Sigmoid(float value)
+    {
+        return 1.0f / (1.0f + Mathf.Exp((-value)));
     }
 
     /*int highestValue(Dictionary<Node, int> m_Dict)
@@ -95,28 +106,76 @@ public class AIUnit : MonoBehaviour {
         nodeWithValues.Clear();
 
         //Find all accessable nodes
-        yield return StartCoroutine(EvalUnitNodes(transform.position, movement));
+        yield return StartCoroutine(GatherReachableNodes(transform.position, movement));
 
         Debug.Log(gameObject.name + "  NodeChecking " + nodeForEval.Count);
         //Foreach node get the node's worth
         foreach (Node n in nodeForEval)
         {
             //Debug.Log("Found Nodes " + gameObject.name);
-            yield return StartCoroutine(nodeEval(n));
+            //yield return StartCoroutine(locationEval(n));
         }
         Debug.Log(gameObject.name + "  NodeVals " + nodeWithValues.Count);
         //bestChoice = highestValue(nodeVals);
         nodeWithValues.Sort();  //Will this actually sort by values
-        //yield return 
-       //Debug.Log("Best choice was " + nodeWithValues[0].node.worldPosition + " : " + nodeWithValues[0].value);
-       //Debug.DrawRay(nodeWithValues[0].node.worldPosition, Vector3.up * 10, Color.green, 5);
+                                //yield return 
+                                //Debug.Log("Best choice was " + nodeWithValues[0].node.worldPosition + " : " + nodeWithValues[0].value);
+                                //Debug.DrawRay(nodeWithValues[0].node.worldPosition, Vector3.up * 10, Color.green, 5);
+    }
+
+    public IEnumerator NewBestishPath(int ignoredRnd)
+    {
+        //Return to a proper state
+        movement = movementMax;
+        //Clear old bestish path stuff
+        nodeWithValues.Clear();
+        if (previosUnWalkableNode != null)
+            previosUnWalkableNode.occupied = false;
+        //Find all accessable nodes
+        //yield return StartCoroutine(GatherReachableNodes(transform.position, movement));
+
+        nodeForEval.Clear();
+        visitedRowCol = new bool[Mathf.RoundToInt(m_grid.gridWorldSize.x), Mathf.RoundToInt(m_grid.gridWorldSize.y)];
+        reachableNodes2(transform.position, 0);
+        Debug.Log("# of eval nodes " + nodeForEval.Count);
+
+        // remove nodes for eval, remove gather reachable, create a reachable with single gather and return function
+
+        float stay = Sigmoid(m_grid.NodeFromWorldPoint(transform.position).threatLvl * stayWeight);  //Eval original node for possible leaving dangers  TODO balence
+        float master = 99999f;
+
+        //Eval each node for danger if left and value if moved
+        for (int i = 0; i < nodeForEval.Count; i++)
+        {
+            if (nodeForEval[i].walkable && !nodeForEval[i].occupied)
+            {
+                justREturnedPath = false; //UnsureWhat this fixes
+                yield return null;
+                updateOccupiedNode();
+
+                //Debug.Log("walkable And !occupied");
+                //yield return StartCoroutine(locationEval(nodeForEval[i])); //unsure what this does
+
+                valuedNode[] tmp = m_Action.EvalFunctForAi(nodeForEval[i], target.position);  //Eval the action
+                float Action = Sigmoid(tmp[0].value + actWeight);  
+                master = Sigmoid(Action + -stay);
+                tmp[0].value = master;
+                Debug.Log(gameObject.name + " Charge: " + Action + " Stay: " + stay + "Master Weight: " + master);
+                nodeWithValues.Add(tmp[0]);
+            }
+        }
+        nodeWithValues.Sort();
+        Debug.Log(gameObject.name + " BEST move " + nodeWithValues[0].value + " loc:" + nodeWithValues[0].endNode.worldPosition);
+        
+        yield return null;
     }
 
     int distToUnwalkable(Node startPos, Vector3 dir)
     {
         Vector3 strtPos = startPos.worldPosition;
         //search till our movement range is exceded or we find an edge
-        for (int i = 1; i < maxThreatReach; i ++){
+        for (int i = 1; i < maxThreatReach; i++)
+        {
             Vector3 newSpace = strtPos + (dir * (i));
             Node tmpNode = m_grid.NodeFromWorldPoint(newSpace);
             if (!tmpNode.walkable)
@@ -125,41 +184,13 @@ public class AIUnit : MonoBehaviour {
         return maxThreatReach;
     }
 
-    void locationEval(Node nPos)
-    {
-        justREturnedPath = false;
-        //int totalValue = 0; //Lower is better
-        //totalValue += Mathf.RoundToInt((10 * Vector3.Distance(transform.position, target.position)));  //Replace with Astar?
-        //Evaluate our action funtion from this position and subtract this
-        nodeWithValues.AddRange(m_Action.EvalFunctForAi(nPos, target.position)); 
-    }
-
-    IEnumerator nodeEval(Node n)
-    {
-        if (n.walkable && !n.occupied) { 
-            locationEval(n);
-            //Determine Unit action enpoints val  Utility vs Vulnarability
-            //Unit action endpoints distance to edge and enemies
-            //Sub unit action utility Tar distance + Tar elimination
-
-            yield return null;
-            //If no utility is found then get distance to tar & enemies & edge
-
-            updateOccupiedNode();
-        }
-        else
-        {
-            nodeForEval.Remove(n);
-        }
-    }
-
-    IEnumerator EvalUnitNodes(Vector3 startPos, int pathLength)
+    IEnumerator GatherReachableNodes(Vector3 startPos, int pathLength)
     {
         nodeForEval.Clear();
         visitedRowCol = new bool[Mathf.RoundToInt(m_grid.gridWorldSize.x), Mathf.RoundToInt(m_grid.gridWorldSize.y)];
         Node startNode = m_grid.NodeFromWorldPoint(startPos);
-        yield return  StartCoroutine(crtUGridSub(startPos, 0));
-        crtUGridSub(startPos, 0);
+        yield return StartCoroutine(reachableNodes(startPos, 0));
+        reachableNodes(startPos, 0);
     }
 
     IEnumerator moveThroughPath(Vector3[] _path)
@@ -192,9 +223,9 @@ public class AIUnit : MonoBehaviour {
         StartCoroutine(moveThroughPath(newPath));
     }
 
-        //Also strikes old node as walkable and new node as occupied/Unwalkable
-        public void CheckIfWeFellOff()
-        {
+    //Also strikes old node as walkable and new node as occupied/Unwalkable
+    public void CheckIfWeFellOff()
+    {
         //Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), Vector3.down * 2f, Color.green, 10f);
         if (!Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 1, transform.position.z), Vector3.down, 2f, walkableMask))
         {
@@ -215,7 +246,7 @@ public class AIUnit : MonoBehaviour {
     }
 
     //TODO Prevent race conditons in this later
-    IEnumerator crtUGridSub(Vector3 nodePos, int depth)
+    IEnumerator reachableNodes(Vector3 nodePos, int depth)
     {
         Node node = m_grid.NodeFromWorldPoint(nodePos);
         if (visitedRowCol[Mathf.RoundToInt(node.gridX), Mathf.RoundToInt(node.gridY)] == false && node.walkable && depth <= movement)
@@ -224,21 +255,47 @@ public class AIUnit : MonoBehaviour {
             if (depth != 0 && !node.occupied)
             {
                 nodeForEval.Add(node);
-                crtUGridSub(new Vector3(node.worldPosition.x + nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
-                crtUGridSub(new Vector3(node.worldPosition.x - nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
-                crtUGridSub(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z + nodeSize), depth + 1);
-                crtUGridSub(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z - nodeSize), depth + 1);
+                reachableNodes(new Vector3(node.worldPosition.x + nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
+                reachableNodes(new Vector3(node.worldPosition.x - nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
+                reachableNodes(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z + nodeSize), depth + 1);
+                reachableNodes(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z - nodeSize), depth + 1);
                 yield return null;
-            }else if (depth == 0)
+            }
+            else if (depth == 0)
             {
-                crtUGridSub(new Vector3(node.worldPosition.x + nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
-                crtUGridSub(new Vector3(node.worldPosition.x - nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
-                crtUGridSub(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z + nodeSize), depth + 1);
-                crtUGridSub(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z - nodeSize), depth + 1);
+                reachableNodes(new Vector3(node.worldPosition.x + nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
+                reachableNodes(new Vector3(node.worldPosition.x - nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
+                reachableNodes(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z + nodeSize), depth + 1);
+                reachableNodes(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z - nodeSize), depth + 1);
                 yield return null;
             }
         }
         yield return null;
+    }
+
+    void reachableNodes2(Vector3 nodePos, int depth)
+    {
+        Debug.DrawRay(nodePos, Vector3.up * 2f, Color.blue, 2.5f);
+        Node node = m_grid.NodeFromWorldPoint(nodePos);
+        if (visitedRowCol[Mathf.RoundToInt(node.gridX), Mathf.RoundToInt(node.gridY)] == false && node.walkable && depth <= movement)
+        {
+            visitedRowCol[Mathf.RoundToInt(node.gridX), Mathf.RoundToInt(node.gridY)] = true;
+            if (depth != 0 && !node.occupied)
+            {
+                nodeForEval.Add(node);
+                reachableNodes2(new Vector3(node.worldPosition.x + nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
+                reachableNodes2(new Vector3(node.worldPosition.x - nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
+                reachableNodes2(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z + nodeSize), depth + 1);
+                reachableNodes2(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z - nodeSize), depth + 1);
+            }
+            else if (depth == 0)
+            {
+                reachableNodes2(new Vector3(node.worldPosition.x + nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
+                reachableNodes2(new Vector3(node.worldPosition.x - nodeSize, node.worldPosition.y, node.worldPosition.z), depth + 1);
+                reachableNodes2(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z + nodeSize), depth + 1);
+                reachableNodes2(new Vector3(node.worldPosition.x, node.worldPosition.y, node.worldPosition.z - nodeSize), depth + 1);
+            }
+        }
     }
 
     //Can this be handles in the charge action class? from the pushing end?
@@ -247,18 +304,18 @@ public class AIUnit : MonoBehaviour {
         newPos = newPos + (-chargeDir.normalized * 1f);
         //if (!moving)
         //{
-            Vector3[] tmpArray = new Vector3[] { new Vector3(newPos.x, newPos.y + (yOffset / 2), newPos.z) };
-            StartCoroutine(moveThroughPath(tmpArray));
+        Vector3[] tmpArray = new Vector3[] { new Vector3(newPos.x, newPos.y + (yOffset / 2), newPos.z) };
+        StartCoroutine(moveThroughPath(tmpArray));
         //}
     }
 }
 
 public class valuedNode : System.IComparable<valuedNode>
 {
-    public int value;
+    public float value;
     public Node endNode;
     public Node moveNode;
-    public valuedNode (int val, Node eNde, Node mNode)  //Constructs a val node
+    public valuedNode(float val, Node eNde, Node mNode)  //Constructs a val node
     {
         value = val;
         endNode = eNde;

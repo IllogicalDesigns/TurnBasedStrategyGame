@@ -11,6 +11,9 @@ public class Tactician : MonoBehaviour
     public TurnController m_TurnController;
     [SerializeField] bool displayGizmos = true;
 
+    [SerializeField] GameObject debugFlag;
+    bool debugFlags = true;
+
     // Use this for initialization
     void Start()
     {
@@ -23,11 +26,11 @@ public class Tactician : MonoBehaviour
         {
             foreach (valuedMoves n in returned)
             {
-                if (n.value < 1)
+                if (n.value < 0.25f)
                     Gizmos.color = Color.green;
-                else if (n.value >= 1 && n.value <= 2)
+                else if (n.value >= 0.26f && n.value <= 0.5f)
                     Gizmos.color = Color.yellow;
-                else if (n.value >= 2 && n.value <= 3)
+                else if (n.value >= 0.51f && n.value <= 0.75f)
                     Gizmos.color = Color.red;
                 else
                     Gizmos.color = Color.black;
@@ -44,9 +47,9 @@ public class Tactician : MonoBehaviour
         {
             //Ask for them to eval all actions
             if (ai.gameObject.activeInHierarchy) {
-                yield return StartCoroutine(ai.FindBestIshPath(Stupidity));
+                yield return StartCoroutine(ai.NewBestishPath(Stupidity));
             }
-            //yield return StartCoroutine(ai.FindBestIshPath(Stupidity));
+
             for (int i = 0; i < ai.nodeWithValues.Count && i < Stupidity; i++)
             {
                 returned.Add(new valuedMoves(ai.nodeWithValues[i].value, ai.nodeWithValues[i], ai));
@@ -55,12 +58,24 @@ public class Tactician : MonoBehaviour
         if (returned.Count > 0)
         {
             returned.Sort();
+            returned.Reverse();
             //Debug.Log("Best choice was " + returned[0].node.moveNode.worldPosition + " Value: " + returned[0].value + " Unit: " + returned[0].unit.name);
             //Debug.DrawRay(returned[0].node.moveNode.worldPosition, Vector3.up * 10, Color.green, 5);
+            int i = 0;
             foreach (valuedMoves vM in returned)
             {
-               // Debug.Log("name:" + vM.unit.gameObject.name + " value:" + vM.value + " Node:" + vM.node.moveNode.worldPosition +" :" +
-                   // vM.node.endNode.worldPosition + " ");
+                i++;
+                // Debug.Log("name:" + vM.unit.gameObject.name + " value:" + vM.value + " Node:" + vM.node.moveNode.worldPosition +" :" +
+                // vM.node.endNode.worldPosition + " ");
+                if (debugFlags && vM == returned[0])
+                {
+                    GameObject tmpFlag = Instantiate(debugFlag, vM.node.endNode.worldPosition, debugFlag.transform.rotation) as GameObject;
+                    tmpFlag.GetComponent<NodeFlagHelpers>().SetWeightText(i.ToString() + " : " + vM.value.ToString(), Color.green);
+                }
+                else { 
+                    GameObject tmpFlag = Instantiate(debugFlag, vM.node.endNode.worldPosition, debugFlag.transform.rotation) as GameObject;
+                    tmpFlag.GetComponent<NodeFlagHelpers>().SetWeightText(i.ToString() + " : " + vM.value.ToString(), Color.red);
+                }
             }
         }
         else
@@ -102,10 +117,10 @@ public class Tactician : MonoBehaviour
 }
 public class valuedMoves : System.IComparable<valuedMoves>
 {
-    public int value;
+    public float value;
     public valuedNode node;
     public AIUnit unit;
-    public valuedMoves(int val, valuedNode nde, AIUnit uAi)  //Constructs a val node
+    public valuedMoves(float val, valuedNode nde, AIUnit uAi)  //Constructs a val node
     {
         value = val;
         node = nde;
