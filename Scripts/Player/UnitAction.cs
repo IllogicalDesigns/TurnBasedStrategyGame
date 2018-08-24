@@ -25,7 +25,7 @@ public abstract class UnitAction : MonoBehaviour {
     public virtual void influenceHeatMap(Grid m_Grid, Node n)
     {
     }
-    public virtual valuedNode[] EvalFunctForAi(Node nPos, Vector3 tar)
+    public virtual vMove[] EvalFunctForAi(Node nPos, Vector3 tar)
     {
         return null;
     }

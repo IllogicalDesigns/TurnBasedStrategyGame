@@ -11,7 +11,7 @@ public class AIUnit : MonoBehaviour
     int nodeSize = 1; //Used for movement grid
     List<Node> nodeForEval = new List<Node>();
     //public Dictionary<Node, int> nodeVals = new Dictionary<Node, int>();
-    public List<valuedNode> nodeWithValues = new List<valuedNode>();
+    public List<vMove> nodeWithValues = new List<vMove>();
     public int bestChoice = 0;  //Index of the nodeval
     int pathLegth = 1;
     bool justREturnedPath = false;
@@ -43,6 +43,12 @@ public class AIUnit : MonoBehaviour
         m_Player = gameObject.GetComponentInParent<PlayerInfo>();
         activeMat = m_Player.activeColor;
         deactiveMat = m_Player.deactiveColor;
+    }
+
+    void OnDrawGizmos()
+    {
+        foreach(Node n in nodeForEval)
+            Gizmos.DrawWireSphere(n.worldPosition, 0.05f);
     }
 
     // Update is called once per frame
@@ -98,7 +104,7 @@ public class AIUnit : MonoBehaviour
         return hIndex;  //returns an index for the highest index
     }*/
 
-    public IEnumerator FindBestIshPath(int rndness)
+    public IEnumerator FindBestIshPath(int rndness) //Deprecated
     {
         Debug.Log(gameObject.name + " FindingBest");
         if (previosUnWalkableNode != null)
@@ -141,7 +147,8 @@ public class AIUnit : MonoBehaviour
 
         // remove nodes for eval, remove gather reachable, create a reachable with single gather and return function
 
-        float stay = Sigmoid(m_grid.NodeFromWorldPoint(transform.position).threatLvl * stayWeight);  //Eval original node for possible leaving dangers  TODO balence
+        //float stay = Sigmoid(m_grid.NodeFromWorldPoint(transform.position).threatLvl * stayWeight);  //Eval original node for possible leaving dangers  TODO balence
+        float stay = m_grid.NodeFromWorldPoint(transform.position).threatLvl * stayWeight;
         float master = 99999f;
 
         //Eval each node for danger if left and value if moved
@@ -156,12 +163,22 @@ public class AIUnit : MonoBehaviour
                 //Debug.Log("walkable And !occupied");
                 //yield return StartCoroutine(locationEval(nodeForEval[i])); //unsure what this does
 
-                valuedNode[] tmp = m_Action.EvalFunctForAi(nodeForEval[i], target.position);  //Eval the action
-                float Action = Sigmoid(tmp[0].value + actWeight);  
+                vMove[] tmp = m_Action.EvalFunctForAi(nodeForEval[i], target.position);  //Eval the action
+                for(int k = 0; k <tmp.Length; k++)
+                {
+                    //float Action = Sigmoid(tmp[k].value + actWeight);
+                    float Action = tmp[k].value * actWeight;
+                    master = Action + stay;
+                    //master = Sigmoid(Action + -stay);
+                    tmp[k].value = master;
+                    Debug.Log(gameObject.name + " Charge: " + Action + " Stay: " + stay + "Master Weight: " + master + " " + tmp[k].endNode.worldPosition);
+                    nodeWithValues.Add(tmp[k]);
+                }
+               /* float Action = Sigmoid(tmp[0].value + actWeight);  
                 master = Sigmoid(Action + -stay);
                 tmp[0].value = master;
                 Debug.Log(gameObject.name + " Charge: " + Action + " Stay: " + stay + "Master Weight: " + master);
-                nodeWithValues.Add(tmp[0]);
+                nodeWithValues.Add(tmp[0]);*/
             }
         }
         nodeWithValues.Sort();
@@ -275,7 +292,7 @@ public class AIUnit : MonoBehaviour
 
     void reachableNodes2(Vector3 nodePos, int depth)
     {
-        Debug.DrawRay(nodePos, Vector3.up * 2f, Color.blue, 2.5f);
+        //Debug.DrawRay(nodePos, Vector3.up * 2f, Color.blue, 2.5f);
         Node node = m_grid.NodeFromWorldPoint(nodePos);
         if (visitedRowCol[Mathf.RoundToInt(node.gridX), Mathf.RoundToInt(node.gridY)] == false && node.walkable && depth <= movement)
         {
@@ -310,18 +327,18 @@ public class AIUnit : MonoBehaviour
     }
 }
 
-public class valuedNode : System.IComparable<valuedNode>
+public class vMove1 : System.IComparable<vMove1>
 {
     public float value;
     public Node endNode;
     public Node moveNode;
-    public valuedNode(float val, Node eNde, Node mNode)  //Constructs a val node
+    public vMove1(float val, Node eNde, Node mNode)  //Constructs a val node
     {
         value = val;
         endNode = eNde;
         moveNode = mNode;
     }
-    public int CompareTo(valuedNode other)  //Lets us use .sort 
+    public int CompareTo(vMove other)  //Lets us use .sort 
     {
         return value.CompareTo(other.value);
     }

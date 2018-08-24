@@ -9,15 +9,21 @@ EditorBuildSettings:
     path: Assets/Levels/OfflineMap.unity
     guid: c750bdb935a7fca478c30345f5ba8a68
   - enabled: 0
-    path: Assets/Levels/NetworkMap.unity
-    guid: fa2bc5095b261484ea33abb892bfa2d6
-  - enabled: 1
     path: Assets/Levels/ScfiMenu.unity
     guid: a5f38bd389f546848ad6883707c8512c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Levels/testArt.unity
     guid: 9cbb3bd715a269f40ac33705da6cebba
-  - enabled: 1
+  - enabled: 0
     path: Assets/Levels/LvlDesigner.unity
     guid: 652787f5c4ea13e4d81d101d81c12df6
+  - enabled: 0
+    path: Assets/Levels/LMulti.unity
+    guid: d04521305371d4e4bab8bf1427e278ad
+  - enabled: 1
+    path: Assets/Levels/NetworkMap.unity
+    guid: fa2bc5095b261484ea33abb892bfa2d6
+  - enabled: 0
+    path: Assets/Levels/TestLvls/NetworkTest.unity
+    guid: 1ab4e844b7eb33148a3cc07596dbde99
   m_configObjects: {}

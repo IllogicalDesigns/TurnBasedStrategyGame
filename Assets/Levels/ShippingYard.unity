@@ -390,7 +390,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4378624211076928, guid: 57afb6b43c4c7ef44b21207e3040cb79, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -0.88
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: 4378624211076928, guid: 57afb6b43c4c7ef44b21207e3040cb79, type: 2}
       propertyPath: m_LocalPosition.z
@@ -1027,6 +1027,11 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 394150686}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &429664386 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4378624211076928, guid: 57afb6b43c4c7ef44b21207e3040cb79,
+    type: 2}
+  m_PrefabInternal: {fileID: 188370545}
 --- !u!1 &665907028
 GameObject:
   m_ObjectHideFlags: 0
@@ -2473,11 +2478,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4321369842577900, guid: 2ff29f4164035b84fbf0fd415a782b4b, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 4.09
+      value: -0.91
       objectReference: {fileID: 0}
     - target: {fileID: 4321369842577900, guid: 2ff29f4164035b84fbf0fd415a782b4b, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -3.96
+      value: -0.96
       objectReference: {fileID: 0}
     - target: {fileID: 4106976444477686, guid: 2ff29f4164035b84fbf0fd415a782b4b, type: 2}
       propertyPath: m_LocalPosition.x
@@ -2516,17 +2521,17 @@ Prefab:
         type: 2}
       propertyPath: target
       value: 
-      objectReference: {fileID: 1538816548}
+      objectReference: {fileID: 429664386}
     - target: {fileID: 114609024664896040, guid: 2ff29f4164035b84fbf0fd415a782b4b,
         type: 2}
       propertyPath: target
       value: 
-      objectReference: {fileID: 1538816548}
+      objectReference: {fileID: 429664386}
     - target: {fileID: 114107258412920576, guid: 2ff29f4164035b84fbf0fd415a782b4b,
         type: 2}
       propertyPath: target
       value: 
-      objectReference: {fileID: 1538816548}
+      objectReference: {fileID: 429664386}
     - target: {fileID: 114949982263909246, guid: 2ff29f4164035b84fbf0fd415a782b4b,
         type: 2}
       propertyPath: m_TurnController
@@ -2573,17 +2578,17 @@ Prefab:
     - target: {fileID: 114575382661784516, guid: 2ff29f4164035b84fbf0fd415a782b4b,
         type: 2}
       propertyPath: knockOffWeight
-      value: 15
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114476252274115702, guid: 2ff29f4164035b84fbf0fd415a782b4b,
         type: 2}
       propertyPath: knockOffWeight
-      value: 15
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114107258412920576, guid: 2ff29f4164035b84fbf0fd415a782b4b,
         type: 2}
       propertyPath: stayWeight
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114609024664896040, guid: 2ff29f4164035b84fbf0fd415a782b4b,
         type: 2}
@@ -2593,22 +2598,22 @@ Prefab:
     - target: {fileID: 114107258412920576, guid: 2ff29f4164035b84fbf0fd415a782b4b,
         type: 2}
       propertyPath: actWeight
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114609024664896040, guid: 2ff29f4164035b84fbf0fd415a782b4b,
         type: 2}
       propertyPath: actWeight
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114575382661784516, guid: 2ff29f4164035b84fbf0fd415a782b4b,
         type: 2}
       propertyPath: heatWeight
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114476252274115702, guid: 2ff29f4164035b84fbf0fd415a782b4b,
         type: 2}
       propertyPath: heatWeight
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114949982263909246, guid: 2ff29f4164035b84fbf0fd415a782b4b,
         type: 2}
@@ -2620,6 +2625,25 @@ Prefab:
         type: 2}
       propertyPath: Stupidity
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1331606564520796, guid: 2ff29f4164035b84fbf0fd415a782b4b, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114714113611771686, guid: 2ff29f4164035b84fbf0fd415a782b4b,
+        type: 2}
+      propertyPath: knockOffWeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114863751881697674, guid: 2ff29f4164035b84fbf0fd415a782b4b,
+        type: 2}
+      propertyPath: stayWeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114714113611771686, guid: 2ff29f4164035b84fbf0fd415a782b4b,
+        type: 2}
+      propertyPath: heatWeight
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2ff29f4164035b84fbf0fd415a782b4b, type: 2}

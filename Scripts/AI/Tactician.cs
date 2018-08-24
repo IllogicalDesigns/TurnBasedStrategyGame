@@ -58,7 +58,7 @@ public class Tactician : MonoBehaviour
         if (returned.Count > 0)
         {
             returned.Sort();
-            returned.Reverse();
+            //returned.Reverse();
             //Debug.Log("Best choice was " + returned[0].node.moveNode.worldPosition + " Value: " + returned[0].value + " Unit: " + returned[0].unit.name);
             //Debug.DrawRay(returned[0].node.moveNode.worldPosition, Vector3.up * 10, Color.green, 5);
             int i = 0;
@@ -118,9 +118,9 @@ public class Tactician : MonoBehaviour
 public class valuedMoves : System.IComparable<valuedMoves>
 {
     public float value;
-    public valuedNode node;
+    public vMove node;
     public AIUnit unit;
-    public valuedMoves(float val, valuedNode nde, AIUnit uAi)  //Constructs a val node
+    public valuedMoves(float val, vMove nde, AIUnit uAi)  //Constructs a val node
     {
         value = val;
         node = nde;

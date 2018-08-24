@@ -15,10 +15,17 @@ public class ChargeAction : UnitAction
     int enemyInt = 0;
     public int ownerInt = 0;
     AIUnit uAi;
+    List<Node> nodeForEval = new List<Node>();
 
     [SerializeField] float heatWeight = 1f;
     [SerializeField] float knockOffWeight = 2f;
 
+
+    void OnDrawGizmos()
+    {
+        foreach (Node n in nodeForEval)
+            Gizmos.DrawSphere(n.worldPosition, 0.05f);
+    }
 
     void start()
     {
@@ -146,26 +153,30 @@ public class ChargeAction : UnitAction
         StartCoroutine(chargePusher(newPos));
     }
 
-    public override valuedNode[] EvalFunctForAi(Node nPos, Vector3 tar)
+    public override vMove[] EvalFunctForAi(Node nPos, Vector3 tar)
     {
-
-        Debug.DrawRay(nPos.worldPosition, Vector3.forward * chrgDistance, Color.green, 10f);
-        Debug.DrawRay(nPos.worldPosition, Vector3.back * chrgDistance, Color.green, 10f);
-        Debug.DrawRay(nPos.worldPosition, Vector3.right * chrgDistance, Color.green, 10f);
-        Debug.DrawRay(nPos.worldPosition, Vector3.left * chrgDistance, Color.green, 10f);
+        //nodeForEval.Clear();
+        //Debug.DrawRay(nPos.worldPosition, Vector3.forward * chrgDistance, Color.green, 10f);
+        //Debug.DrawRay(nPos.worldPosition, Vector3.back * chrgDistance, Color.green, 10f);
+        //Debug.DrawRay(nPos.worldPosition, Vector3.right * chrgDistance, Color.green, 10f);
+        //Debug.DrawRay(nPos.worldPosition, Vector3.left * chrgDistance, Color.green, 10f);
         //Judge Each direction
-        valuedNode[] finalNodes = new valuedNode[4];
+        vMove[] finalNodes = new vMove[4];
         if (uAi == null)
             uAi = GetComponent<AIUnit>();
         finalNodes[0] = chargeDirEval(nPos, Vector3.forward);
-            finalNodes[0].value += Mathf.RoundToInt(Vector3.Distance(finalNodes[0].endNode.worldPosition, tar));
+            //finalNodes[0].value += Mathf.RoundToInt(Vector3.Distance(finalNodes[0].endNode.worldPosition, tar));
         finalNodes[1] = chargeDirEval(nPos, Vector3.back);
-            finalNodes[1].value += Mathf.RoundToInt(Vector3.Distance(finalNodes[1].endNode.worldPosition, tar));
+            //finalNodes[1].value += Mathf.RoundToInt(Vector3.Distance(finalNodes[1].endNode.worldPosition, tar));
         finalNodes[2] = chargeDirEval(nPos, Vector3.left);
-            finalNodes[2].value += Mathf.RoundToInt(Vector3.Distance(finalNodes[2].endNode.worldPosition, tar));
+            //finalNodes[2].value += Mathf.RoundToInt(Vector3.Distance(finalNodes[2].endNode.worldPosition, tar));
         finalNodes[3] = chargeDirEval(nPos, Vector3.right);
-            finalNodes[3].value += Mathf.RoundToInt(Vector3.Distance(finalNodes[3].endNode.worldPosition, tar));
+            //finalNodes[3].value += Mathf.RoundToInt(Vector3.Distance(finalNodes[3].endNode.worldPosition, tar));
         //Sort by values
+        nodeForEval.Add(finalNodes[0].endNode);
+        nodeForEval.Add(finalNodes[1].endNode);
+        nodeForEval.Add(finalNodes[2].endNode);
+        nodeForEval.Add(finalNodes[3].endNode);
         float temp = 0;
         for (int write = 0; write < finalNodes.Length; write++)
         {
@@ -187,10 +198,9 @@ public class ChargeAction : UnitAction
         return 1.0f / (1.0f + Mathf.Exp((-value)));
     }
 
-    valuedNode chargeDirEval(Node startPos, Vector3 dir)  //TODO convert to also check for enemies and push potential
+    vMove chargeDirEval(Node startPos, Vector3 dir)  //TODO convert to also check for enemies and push potential
     {
         Debug.DrawRay(new Vector3(startPos.worldPosition.x, startPos.worldPosition.y + 0.5f, startPos.worldPosition.z), dir * chargeDistange, Color.black, 5);
-
         Vector3 newSpace = new Vector3(0f, 0f, 0f);
         Node tmpNode = m_grid.NodeFromWorldPoint(newSpace);
         Vector3 strtPos = startPos.worldPosition;
@@ -214,13 +224,14 @@ public class ChargeAction : UnitAction
             }
         }
         //If we reached an occupied see who it is
+        //Debug.DrawRay(new Vector3(startPos.worldPosition.x, startPos.worldPosition.y + 0.45f, startPos.worldPosition.z), dir * chargeDistange, Color.yellow, 5);
         if (ReachesOccupied && Physics.Raycast(new Vector3(startPos.worldPosition.x, startPos.worldPosition.y + 0.5f, startPos.worldPosition.z), dir, out hit))
         {
             if (hit.collider.tag == "Player")  //TODO remove these hard coded values
             {
                 if (hit.collider.GetComponent<TBSUnit>().whoOwnsMe() != ownerInt && ReachesAnEdge)
                 {
-                    Debug.DrawRay(new Vector3(startPos.worldPosition.x, startPos.worldPosition.y + 0.5f, startPos.worldPosition.z), dir * chargeDistange, Color.cyan, 5);
+                    Debug.DrawRay(new Vector3(startPos.worldPosition.x, startPos.worldPosition.y + 0.75f, startPos.worldPosition.z), dir * chargeDistange, Color.blue, 5);
                     //Debug.Log("Reached occupied and hit : " + hit.collider.name);
                     //return new valuedNode(tmpNode.threatLvl - 30, tmpNode, startPos);
                     KnockEnemyOff = true;
@@ -235,20 +246,21 @@ public class ChargeAction : UnitAction
                 }
             }
         }
-        //Debug.Log(KnockEnemyOff + " occupied:" + tmpNode.occupied + " walkable:" +tmpNode.walkable);
         if (tmpNode.walkable)  //removed unocuppied flag
         {
-            float chargeVal = Sigmoid(tmpNode.threatLvl + heatWeight);
+            //float chargeVal = Sigmoid(tmpNode.threatLvl + heatWeight);
+            float chargeVal = tmpNode.threatLvl * heatWeight;
             if (KnockEnemyOff)
             {
-                Debug.Log("ThreatWeight: " + chargeVal + " AttackWeight: " + Sigmoid(1f + knockOffWeight) + " Name:"+ gameObject.name);
-                chargeVal = Sigmoid(0.5f + knockOffWeight + chargeVal);
+                Debug.Log("ThreatWeight: " + chargeVal + " AttackWeight: -" + (1f * knockOffWeight) + " Name:"+ gameObject.name + " KNOCKED OFF " + tmpNode.worldPosition);
+                //chargeVal = Sigmoid(0.5f + knockOffWeight + chargeVal);
+                chargeVal = chargeVal - (1 * knockOffWeight);
             }
             else
                 Debug.Log("ThreatWeight: " + chargeVal + " AttackWeight: 0");
-            return new valuedNode(chargeVal, tmpNode, startPos);
+            return new vMove(chargeVal, tmpNode, startPos);
         }
-        return new valuedNode(999999, tmpNode, startPos);
+        return new vMove(999999, tmpNode, startPos);
     }
 
     IEnumerator moveThroughPath(Vector3[] _path)
