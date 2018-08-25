@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//odd behavior at 3 search depth, correct at 2 depth
 public class ThinkingCoordinator : MonoBehaviour {
     public bool[] thinkings;
     public float currDepth = 0;
@@ -95,7 +96,6 @@ public class ThinkingCoordinator : MonoBehaviour {
                     break;
                 yield return null;
             }*/
-
             currDepth++;
         }
         ClearDummyCollider();

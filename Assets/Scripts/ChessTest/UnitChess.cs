@@ -27,6 +27,11 @@ public class UnitChess : MonoBehaviour {
         Gizmos.color = debugColor;
         foreach (vMove vn in firstNodes) {
             if (vn != null) {
+                Gizmos.DrawSphere(vn.endNode.worldPosition, (0.015f + (vn.treeVal * 0.01f)));
+            }
+        }
+        foreach (vMove vn in finNodes) {
+            if (vn != null) {
                 Gizmos.DrawSphere(vn.endNode.worldPosition, (0.005f + (vn.treeVal * 0.01f)));
             }
         }
@@ -34,37 +39,37 @@ public class UnitChess : MonoBehaviour {
     public string TeamNum() {
         return team;
     }
-    vMove ChargeMove(Vector3 startXy, Vector3 dir, int dist, vMove previosNode, bool simMove)
-    {
+    vMove ChargeMove(Vector3 startXy, Vector3 dir, int dist, vMove previosNode, bool simMove) {
         bool unitInLine = false;
         float val = 0;
         int valUnitLine = 0;
         Vector3 newSpace = startXy + (dir * (dist));  //create a pos at the end spot
         Node endNode = m_grid.NodeFromWorldPoint(newSpace);  // Get node from new pos
         if (!endNode.walkable) {
-            Debug.DrawRay(newSpace, Vector3.up, Color.red, 5f);
+            //Debug.DrawRay(newSpace, Vector3.up, Color.red, 5f);
             return null;
         }
         else {
             for (int i = 1; i <= dist; i++) {
-                Debug.DrawRay(newSpace, Vector3.up, Color.green, 5f);
+                //Debug.DrawRay(newSpace, Vector3.up, Color.green, 5f);
                 Vector3 testPos = startXy + (dir * (i));
                 Node testN = m_grid.NodeFromWorldPoint(testPos);
                 if (!testN.walkable) {
-                    Debug.DrawRay(newSpace, dir, Color.yellow, 5f);
-                    Debug.DrawRay(newSpace, Vector3.up, Color.yellow, 5f);
+                    //Debug.DrawRay(newSpace, dir, Color.yellow, 5f);
+                    //Debug.DrawRay(newSpace, Vector3.up, Color.yellow, 5f);
                     return null;
                 }
             }
             Debug.DrawRay(newSpace, -dir * dist, debugColor, 5f);
             val += dist * distCoverd;
             val += CheckPushDanger(endNode);  //Check pushablity of endnode  //TODO actually check danger
-            valUnitLine += CheckIfUnitInLine(newSpace, new Vector3(startXy.x, 0, startXy.y));
+            valUnitLine += CheckIfUnitInLine(dist, startXy, dir);
             if (valUnitLine > 0)
                 unitInLine = true;
-            val += valUnitLine;
             if (CheckIfPossibleElim(newSpace, dir) && unitInLine)
-                val += posElim;
+                val += valUnitLine * posElim;
+            else
+                val += valUnitLine;
             //Distance to 
             //allows for movement in line in dir based on dist
             return new vMove(val, endNode, previosNode);
@@ -78,25 +83,27 @@ public class UnitChess : MonoBehaviour {
         else
             return true;
     }
-    int CheckIfUnitInLine(Vector3 endPos, Vector3 startPos) { //TODO Make sure every kill move is evaled properly
-
-        //Check each sqr in line based on dist and dir
-        //Each square will be a raycast upwards with team filter
-        //returning the number of enemies in the line, teamates are not obstacles yet or ever?
-
-        //Check what units maybe in line
-        RaycastHit hit;
-        if (Physics.Linecast(endPos, startPos, out hit, lM)) {
-            if (!hit.collider.CompareTag(team))
-                return unitInLine;
+    int CheckIfUnitInLine(int dist, Vector3 startPos, Vector3 dir) { //TODO Test if proper
+        int units = 0;
+        for (int i = 0; i < dist; i++) {
+            Vector3 newSpace = startPos + (dir * (i));  //create a pos along line
+            RaycastHit hit;
+            if (Physics.Raycast(newSpace, Vector3.up, out hit, 2f, lM)) {
+                Debug.Log("1");
+                if (!hit.collider.CompareTag(team)) {
+                    units++;
+                    Debug.DrawRay(newSpace, Vector3.up, Color.yellow, 5f);
+                    Debug.Log("TEST");
+                }
+            }
         }
-        return 0;
+        return units;
     }
     int CheckPushDanger(Node testNode) {  //TODO actually check something
         //check n,s,e,w if we see an edge and a square to push from
         return -EdgeDanger * 2;
     }
-    void SendEndPosToBigThink () {
+    void SendEndPosToBigThink() {
         Vector3[] nEndPos = new Vector3[finNodes.Count];
         int i = 0;
         foreach (vMove vm in finNodes) {
