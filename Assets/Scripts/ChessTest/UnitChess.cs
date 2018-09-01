@@ -18,28 +18,27 @@ public class UnitChess : MonoBehaviour {
     bool checking = false;
     [SerializeField] int who = 0;
 
+    [SerializeField] GameObject dCollider;
+    [SerializeField] GameObject[] previousDummyCollider;
+
     // Use this for initialization
     void Start() {
         Debug.DrawRay(transform.position, Vector3.forward * 5, Color.green, 1f);
         Debug.DrawRay(transform.position, Vector3.right * 5, Color.red, 1f);
+        transform.position = m_grid.NodeFromWorldPoint(transform.position).worldPosition;
     }
     private void OnDrawGizmos() {
         Gizmos.color = debugColor;
         foreach (vMove vn in firstNodes) {
             if (vn != null) {
-                Gizmos.DrawSphere(vn.endNode.worldPosition, (0.015f + (vn.treeVal * 0.01f)));
-            }
-        }
-        foreach (vMove vn in finNodes) {
-            if (vn != null) {
-                Gizmos.DrawSphere(vn.endNode.worldPosition, (0.005f + (vn.treeVal * 0.01f)));
+                Gizmos.DrawSphere(vn.endNode.worldPosition, (0.015f + (vn.treeVal * 0.05f)));
             }
         }
     }
     public string TeamNum() {
         return team;
     }
-    vMove ChargeMove(Vector3 startXy, Vector3 dir, int dist, vMove previosNode, bool simMove) {
+    vMove ChargeMove(Vector3 startXy, Vector3 dir, int dist, vMove previosNode, bool simMove) {  //TODO hand information to checks in a abstract virtual friendly way
         bool unitInLine = false;
         float val = 0;
         int valUnitLine = 0;
@@ -60,7 +59,7 @@ public class UnitChess : MonoBehaviour {
                     return null;
                 }
             }
-            Debug.DrawRay(newSpace, -dir * dist, debugColor, 5f);
+            Debug.DrawRay(newSpace, -dir * dist, debugColor, 2f);
             val += dist * distCoverd;
             val += CheckPushDanger(endNode);  //Check pushablity of endnode  //TODO actually check danger
             valUnitLine += CheckIfUnitInLine(dist, startXy, dir);
@@ -72,6 +71,9 @@ public class UnitChess : MonoBehaviour {
                 val += valUnitLine;
             //Distance to 
             //allows for movement in line in dir based on dist
+
+            //Test if pushed and update
+
             return new vMove(val, endNode, previosNode);
         }
     }
@@ -89,11 +91,10 @@ public class UnitChess : MonoBehaviour {
             Vector3 newSpace = startPos + (dir * (i));  //create a pos along line
             RaycastHit hit;
             if (Physics.Raycast(newSpace, Vector3.up, out hit, 2f, lM)) {
-                Debug.Log("1");
                 if (!hit.collider.CompareTag(team)) {
+                    //
                     units++;
                     Debug.DrawRay(newSpace, Vector3.up, Color.yellow, 5f);
-                    Debug.Log("TEST");
                 }
             }
         }
@@ -152,7 +153,6 @@ public class UnitChess : MonoBehaviour {
         firstNodes.Sort();
         firstNodes.Reverse();
         finNodes.AddRange(firstNodes);
-        Debug.Log("Checked Move Number (0): " + finNodes.Count);
         finNodes.Sort();
         finNodes.Reverse();
         finNodes.RemoveRange(Mathf.RoundToInt(finNodes.Count / 2), Mathf.RoundToInt(finNodes.Count / 2));  //TODO perform pruning based on scores
@@ -170,7 +170,6 @@ public class UnitChess : MonoBehaviour {
                 yield return null; //Wait frame
             }
         }
-        Debug.Log("Checked Move Number (1): " + finNodes.Count);
         firstNodes.Sort();
         firstNodes.Reverse();
         finNodes.Sort();

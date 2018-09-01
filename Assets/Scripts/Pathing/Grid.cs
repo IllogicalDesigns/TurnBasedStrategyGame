@@ -2,128 +2,119 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Grid : MonoBehaviour
-{
+public class Grid : MonoBehaviour {
 
-	public bool displayGridGizmos;
-	public LayerMask unwalkableMask;
-	public LayerMask walkableMask;
-	public Vector2 gridWorldSize;
-	public float nodeRadius;
-	Node[,] grid;
+    public bool displayGridGizmos;
+    public LayerMask unwalkableMask;
+    public LayerMask walkableMask;
+    public Vector2 gridWorldSize;
+    public float nodeRadius;
+    Node[,] grid;
 
-	float nodeDiameter;
-	int gridSizeX, gridSizeY;
+    float nodeDiameter;
+    int gridSizeX, gridSizeY;
 
-	void Awake()
-	{
-		nodeDiameter = nodeRadius * 2;
-		gridSizeX = Mathf.RoundToInt (gridWorldSize.x / nodeDiameter);
-		gridSizeY = Mathf.RoundToInt (gridWorldSize.y / nodeDiameter);
-		CreateGrid ();
-	}
+    void Awake() {
+        nodeDiameter = nodeRadius * 2;
+        gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
+        gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
+        CreateGrid();
+    }
 
-	public int MaxSize {
-		get {
-			return gridSizeX * gridSizeY;
-		}
-	}
+    public int MaxSize {
+        get {
+            return gridSizeX * gridSizeY;
+        }
+    }
 
-    public Node[,] getNodeArray()
-    {
+    public Node[,] getNodeArray() {
         return grid;
     }
 
-    public Vector2 getGridSize()
-    {
+    public Vector2 getGridSize() {
         return new Vector2(gridSizeX, gridSizeY);
     }
 
-    void CreateGrid()
-	{
-		grid = new Node[gridSizeX, gridSizeY];
-		Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
+    void CreateGrid() {
+        grid = new Node[gridSizeX, gridSizeY];
+        Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
 
-		for (int x = 0; x < gridSizeX; x++) {
-			for (int y = 0; y < gridSizeY; y++) {
-				Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
-				bool walkable = false;  // default to false
-				if (Physics.Raycast (new Vector3 (worldPoint.x, worldPoint.y + 1, worldPoint.z), Vector3.down, 2f, walkableMask)) {  //see if we can walk on something
-					walkable = true;
-					walkable = !(Physics.CheckSphere (worldPoint, nodeRadius, unwalkableMask));  //If we can walk can we enter that space
-				} else {
-					walkable = false;
-				}
-				grid [x, y] = new Node (walkable, worldPoint, x, y);
+        for (int x = 0; x < gridSizeX; x++) {
+            for (int y = 0; y < gridSizeY; y++) {
+                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
+                bool walkable = false;  // default to false
+                if (Physics.Raycast(new Vector3(worldPoint.x, worldPoint.y + 1, worldPoint.z), Vector3.down, 2f, walkableMask)) {  //see if we can walk on something
+                    walkable = true;
+                    walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));  //If we can walk can we enter that space
+                }
+                else {
+                    walkable = false;
+                }
+                grid[x, y] = new Node(walkable, worldPoint, x, y);
                 //StartCoroutine(grid[x, y].calculateStaticThreatLvl(this));
             }
-		}
-	}
+        }
+    }
 
-	//Evaluates gridPos to see if they are within the grid
-	public List<Node> GetNeighbours(Node node)
-	{
-		List<Node> neighbours = new List<Node> (); //Create List of nodes, can this be an array
-		int nX = node.gridX;
-		int nY = node.gridY;
+    //Evaluates gridPos to see if they are within the grid
+    public List<Node> GetNeighbours(Node node) {
+        List<Node> neighbours = new List<Node>(); //Create List of nodes, can this be an array
+        int nX = node.gridX;
+        int nY = node.gridY;
 
-		if((nX + 1)   <= gridSizeX)
-			neighbours.Add (grid [nX + 1, nY]);
-		if((nX - 1)   <= gridSizeX)
-			neighbours.Add (grid [nX - 1, nY]);
-		if((nY + 1)   <= gridSizeY)
-			neighbours.Add (grid [nX, nY + 1]);
-		if((nY - 1)   <= gridSizeY)
-			neighbours.Add (grid [nX, nY - 1]);
-		return neighbours;
-	}
-		
-	public Node NodeFromWorldPoint(Vector3 worldPosition)
-	{
-		float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
-		float percentY = (worldPosition.z + gridWorldSize.y / 2) / gridWorldSize.y;
-		percentX = Mathf.Clamp01 (percentX);
-		percentY = Mathf.Clamp01 (percentY);
+        if ((nX + 1) <= gridSizeX)
+            neighbours.Add(grid[nX + 1, nY]);
+        if ((nX - 1) <= gridSizeX)
+            neighbours.Add(grid[nX - 1, nY]);
+        if ((nY + 1) <= gridSizeY)
+            neighbours.Add(grid[nX, nY + 1]);
+        if ((nY - 1) <= gridSizeY)
+            neighbours.Add(grid[nX, nY - 1]);
+        return neighbours;
+    }
 
-		int x = Mathf.RoundToInt ((gridSizeX - 1) * percentX);
-		int y = Mathf.RoundToInt ((gridSizeY - 1) * percentY);
-		return grid [x, y];
-	}
+    public Node NodeFromWorldPoint(Vector3 worldPosition) {
+        float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
+        float percentY = (worldPosition.z + gridWorldSize.y / 2) / gridWorldSize.y;
+        percentX = Mathf.Clamp01(percentX);
+        percentY = Mathf.Clamp01(percentY);
 
-	void OnDrawGizmos()
-	{
-		Gizmos.DrawWireCube (transform.position, new Vector3 (gridWorldSize.x, 1, gridWorldSize.y));
-		if (grid != null && displayGridGizmos) {
-			foreach (Node n in grid) {
-				if (n.walkable && !n.occupied) {
-                    if (n.threatLvl >= 1 && n.threatLvl < 3)
-                    {
+        int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
+        int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
+        return grid[x, y];
+    }
+
+    void OnDrawGizmos() {
+        Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
+        if (grid != null && displayGridGizmos) {
+            foreach (Node n in grid) {
+                if (n.walkable && !n.occupied) {
+                    if (n.threatLvl >= 1 && n.threatLvl < 3) {
                         Gizmos.color = Color.yellow;
                         Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 2));
                     }
-                    else if (n.threatLvl >= 3 && n.threatLvl < 6)
-                    {
+                    else if (n.threatLvl >= 3 && n.threatLvl < 6) {
                         Gizmos.color = Color.magenta;
                         Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 2));
                     }
-                    else if (n.threatLvl >= 6)
-                    {
+                    else if (n.threatLvl >= 6) {
                         Gizmos.color = Color.blue;
                         Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 2));
                     }
-                    else
-                    {
+                    else {
                         Gizmos.color = Color.blue;
                         Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter));
                     }
-				} else if (n.occupied && n.walkable) {
-					Gizmos.color = Color.black;
-					Gizmos.DrawWireCube (n.worldPosition, Vector3.one * (nodeDiameter/2));
-				} else {
-					Gizmos.color = Color.red;
-					Gizmos.DrawWireCube (n.worldPosition, Vector3.one * (nodeDiameter/2));
-				}
-			}
-		}
-	}
+                }
+                else if (n.occupied && n.walkable) {
+                    Gizmos.color = Color.black;
+                    Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 2));
+                }
+                else {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 2));
+                }
+            }
+        }
+    }
 }
