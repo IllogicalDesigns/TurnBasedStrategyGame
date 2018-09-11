@@ -9,9 +9,28 @@ public class TurnController : MonoBehaviour {
     [SerializeField] GameObject playerGui;
     [SerializeField] GameObject aiGui;
     [SerializeField] GameObject wonGui;
+    [SerializeField] CamSelect cSelect;
+    [SerializeField] GameObject[] notfiyTurnStart;
+    public bool AI = false;
+
     private void Start() {
         PassTurn("Team1");
         StartCoroutine(AITeam());
+    }
+
+    public void LostWho(int loss) {
+        if (loss == 1) {
+            playerGui.SetActive(false);
+            aiGui.SetActive(false);
+            wonGui.SetActive(true);
+            wonGui.gameObject.SendMessage("WhoWon", "Red");
+        }
+        else if (loss == 0) {
+            playerGui.SetActive(false);
+            aiGui.SetActive(false);
+            wonGui.SetActive(true);
+            wonGui.gameObject.SendMessage("WhoWon", "Blue");
+        }
     }
 
     void lost() {
@@ -37,14 +56,24 @@ public class TurnController : MonoBehaviour {
         if (team == "Team0") {
             currTeamTurn = 1;
             aiGui.SetActive(true);
+            cSelect.SetTeamSelect("Team1");
         }
         else {
             playerGui.SetActive(true);
             currTeamTurn = 0;
+            cSelect.SetTeamSelect("Team0");
         }
 
-        if(currTeamTurn == 1) {
+        if(currTeamTurn == 1 && AI) {
             StartCoroutine(AITeam());
+        }
+        StartTurn();
+    }
+
+    public void StartTurn() {
+        lost(); //TODO fix if broken
+        foreach (GameObject g in notfiyTurnStart) {
+            g.SendMessage("TurnStart", currTeamTurn);
         }
     }
 

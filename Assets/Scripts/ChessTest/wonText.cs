@@ -9,7 +9,7 @@ public class wonText : MonoBehaviour {
     [SerializeField] GameObject playerUI;
 
     public void WhoWon (string winner) {
-        m_MyText.text = winner + "has won";
+        m_MyText.text = winner + " has won";
         Destroy(thinking);
         Destroy(playerUI);
     }

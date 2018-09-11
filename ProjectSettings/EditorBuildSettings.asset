@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Levels/Chess2d.unity
     guid: 9052647fc0629094abb671fb7d1a0b7d
+  - enabled: 1
+    path: Assets/Levels/MultiPlay.unity
+    guid: 50801d617ac1a3544ad4679668ad64bc
   m_configObjects: {}

@@ -10,8 +10,8 @@ public class UnitChess : MonoBehaviour {
     public List<vMove> finNodes = new List<vMove>();
     public List<vMove> firstNodes = new List<vMove>();
     int EdgeDanger = 0;
-    int posElim = 5;
-    int unitInLine = 4;
+    int posElim = 10;
+    int unitInLine = 8;
     float distCoverd = 0.1f;
     [SerializeField] LayerMask lM;
     [SerializeField] Color debugColor;
@@ -38,7 +38,7 @@ public class UnitChess : MonoBehaviour {
     public string TeamNum() {
         return team;
     }
-    vMove ChargeMove(Vector3 startXy, Vector3 dir, int dist, vMove previosNode, bool simMove) {  //TODO hand information to checks in a abstract virtual friendly way
+    vMove ChargeMove(Vector3 startXy, Vector3 dir, int dist, vMove previosNode, bool simMove) {
         bool unitInLine = false;
         float val = 0;
         int valUnitLine = 0;

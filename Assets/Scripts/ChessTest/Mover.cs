@@ -23,26 +23,17 @@ public class Mover : MonoBehaviour {
     }
     void PushCheck(Vector3 goToPos, Vector3 dir) {
         RaycastHit hit;
-        Vector3 testPos = transform.position + (-dir.normalized * 1);
+        Vector3 testPos = transform.position + (-dir.normalized * 1f);
         Debug.DrawRay(new Vector3(testPos.x, -0.5f, testPos.z), Vector3.up * 1, Color.cyan);
-        if (Physics.Raycast(new Vector3(testPos.x,  -0.5f, testPos.z), Vector3.up, out hit, 1f, lM)) {
+        if (Physics.Raycast(new Vector3(testPos.x, -0.5f, testPos.z), Vector3.up, out hit, 1f, lM)) {
             if (!hit.collider.CompareTag(team)) {
-                Vector3 newSpace = goToPos + (-dir * 1);
+                Vector3 newSpace = goToPos + (-dir * 1.4f);
                 newSpace = m_grid.NodeFromWorldPoint(newSpace).worldPosition;
                 hit.collider.SendMessage("PushedTo", new Vector3(newSpace.x, 0, newSpace.z));
                 pushing = true;
             }
         }
-            /*Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z), -new Vector3(dir.x, transform.position.y + 0.1f, dir.z) * 0.8f, Color.cyan);
-            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z), -new Vector3(dir.x, transform.position.y + 0.1f, dir.z), out hit, 0.8f, lM)) {
-                if (!hit.collider.CompareTag(team)) {
-                    Vector3 newSpace = goToPos + (-dir * 1);
-                    newSpace = m_grid.NodeFromWorldPoint(newSpace).worldPosition;
-                    hit.collider.SendMessage("PushedTo", new Vector3(newSpace.x, 0, newSpace.z));
-                    pushing = true;
-                }
-            }*/
-        }
+    }
     IEnumerator Moving(Vector3 _goToPos) {
         if (mov)
             transform.position = goToPos;
@@ -73,7 +64,7 @@ public class Mover : MonoBehaviour {
     public void PushedTo(Vector3 goTo) {
         Debug.DrawRay(goTo, Vector3.forward, Color.blue, 5f);
         Debug.DrawRay(goTo, Vector3.right, Color.blue, 5f);
-        //Debug.Log("Pushing " + gameObject.name + " to " + goTo);
+        Debug.Log("Pushing " + gameObject.name + " to " + goTo);
         pushed = true;
         StartCoroutine(Moving(goTo));
     }
