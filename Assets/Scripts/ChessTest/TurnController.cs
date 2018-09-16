@@ -33,8 +33,8 @@ public class TurnController : MonoBehaviour {
         }
     }
 
-    void lost() {
-        int loss = bigThink.CheckForLoss();
+    void lost() { //TODO remove funciton
+        /*int loss = bigThink.CheckForLoss();
         if(loss == 0) {
             playerGui.SetActive(false);
             aiGui.SetActive(false);
@@ -46,7 +46,7 @@ public class TurnController : MonoBehaviour {
             aiGui.SetActive(false);
             wonGui.SetActive(true);
             wonGui.gameObject.SendMessage("WhoWon", "Blue");
-        }
+        }*/
     }
 
     public void PassTurn (string team) {
